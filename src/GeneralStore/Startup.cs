@@ -59,11 +59,12 @@ namespace GeneralStore
             services.AddScoped<IApplicationDbContext>( 
                 provider => provider.GetService<ApplicationDbContext>());
 
-            services.AddTransient<ProductRepository>();
+            services.AddScoped<ProductRepository>();
+            services.AddTransient<ProductSeedData>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory, ProductSeedData seeder)
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
@@ -107,8 +108,10 @@ namespace GeneralStore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Product}/{action=Index}/{id?}");
             });
+
+            seeder.EnsureSeedData();
         }
 
         // Entry point for the application.

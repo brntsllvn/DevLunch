@@ -37,5 +37,22 @@ namespace GeneralStore.Test
 
             Assert.Equal(data.ToList(), result.ViewData.Model);
         }
+
+        [Fact]
+        public void CreateReturnsNotNull()
+        {
+            var data = new List<Product>().AsQueryable();
+
+            var mockDbSet = new Mock<DbSet<Product>>();
+            var mockDbContext = new Mock<IApplicationDbContext>();
+            mockDbContext.Setup(m => m.Products).Returns(mockDbSet.Object);
+
+            var repo = new ProductRepository(mockDbContext.Object);
+            var productController = new ProductController(repo);
+
+            var result = productController.Create() as ViewResult;
+
+            Assert.NotNull(result);
+        }
     }
 }

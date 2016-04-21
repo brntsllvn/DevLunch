@@ -12,10 +12,16 @@ namespace GeneralStore.Controllers
             _repo = repo;
         }
 
-        public ViewResult Index()
+        public IActionResult Index()
         {
             var model = _repo.GetAllProducts();
             return View(model);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
         }
     }
 }
