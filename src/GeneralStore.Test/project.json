@@ -10,6 +10,7 @@
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
     "GeneralStore": "1.0.0-*",
     "System.Linq.Parallel": "4.0.1-beta-23516",
+    "System.Linq.Queryable": "4.0.1-beta-23516",
     "xunit": "2.1.0",
     "xunit.runner.dnx": "2.1.0-rc1-build204"
   },

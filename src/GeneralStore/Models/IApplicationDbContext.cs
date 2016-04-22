@@ -5,5 +5,7 @@ namespace GeneralStore.Models
     public interface IApplicationDbContext
     {
         DbSet<Product> Products { get; set; }
+
+        int SaveChanges();
     }
 }

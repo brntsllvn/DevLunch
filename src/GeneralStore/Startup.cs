@@ -59,7 +59,6 @@ namespace GeneralStore
             services.AddScoped<IApplicationDbContext>( 
                 provider => provider.GetService<ApplicationDbContext>());
 
-            services.AddScoped<ProductRepository>();
             services.AddTransient<ProductSeedData>();
         }
 
@@ -108,7 +107,7 @@ namespace GeneralStore
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Product}/{action=Index}/{id?}");
+                    template: "{controller=Products}/{action=Index}/{id?}");
             });
 
             seeder.EnsureSeedData();

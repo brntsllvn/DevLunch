@@ -17,5 +17,10 @@ namespace GeneralStore.Models
                 throw new NotImplementedException();
             }
         }
+
+        public int SaveChanges()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
