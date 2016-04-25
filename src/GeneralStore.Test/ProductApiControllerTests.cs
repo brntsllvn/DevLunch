@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using GeneralStore.Controllers;
 using GeneralStore.Models;
 using GeneralStore.Test.Fakes;
@@ -9,13 +10,38 @@ namespace GeneralStore.Test
     public class ProductApiControllerTests
     {
         [Fact]
+        public void Get_NoArguments_ReturnsEmptyList_WhenDbEmpty()
+        {
+            // Arrange
+            var emptyList = new List<Product>();
+            var dbContext = new FakeApplicationDbContext();
+            var controller = new ProductsApiController(dbContext);
+
+            // Act
+            var result = controller.Get().ToList();
+
+            // Assert
+            Assert.NotNull(result);
+
+            var resultCount = result.Count();
+            Assert.Equal(0, resultCount);
+
+            Assert.Equal(emptyList, result);
+        }
+
+        [Fact]
         public void Get_NoArguments_ReturnsAll()
         {
             // Arrange
-            var data = new Product { Name = "Carrot", Description = "A Root" };
+            var data = new List<Product>
+            {
+                new Product { Name = "Carrot", Description = "A Root" },
+                new Product { Name = "Hat", Description = "For keeping head warm" },
+                new Product { Name = "Dog", Description = "Friendly companion" }
+            };
 
             var dbContext = new FakeApplicationDbContext();
-            dbContext.Products.Add(data);
+            dbContext.Products.AddRange(data);
             dbContext.SaveChanges();
 
             var controller = new ProductsApiController(dbContext);
@@ -27,11 +53,9 @@ namespace GeneralStore.Test
             Assert.NotNull(result);
 
             var resultCount = result.Count();
-            Assert.Equal(1,resultCount);
+            Assert.Equal(3, resultCount);
 
-            var product = result.First();
-            Assert.Equal(data.Name,product.Name);
+            Assert.Equal(data, result);
         }
-
     }
 }
