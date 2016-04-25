@@ -8,6 +8,7 @@
   "dependencies": {
     "EntityFramework.Commands": "7.0.0-rc1-final",
     "EntityFramework.MicrosoftSqlServer": "7.0.0-rc1-final",
+    "EntityFramework.Sqlite": "7.0.0-rc1-final",
     "GeneralStore": "1.0.0-*",
     "System.Linq.Parallel": "4.0.1-beta-23516",
     "System.Linq.Queryable": "4.0.1-beta-23516",
@@ -31,8 +32,7 @@
         "System.Collections": "4.0.11-beta-23516",
         "System.Linq": "4.0.1-beta-23516",
         "System.Runtime": "4.0.21-beta-23516",
-        "System.Threading": "4.0.11-beta-23516",
-        "moq.netcore": "4.4.0-beta8"
+        "System.Threading": "4.0.11-beta-23516"
       }
     }
   }
