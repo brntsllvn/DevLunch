@@ -1,4 +1,6 @@
 ﻿using GeneralStore.Controllers.api;
+using GeneralStore.Data;
+using GeneralStore.Data.Models;
 using NUnit.Framework;
 
 namespace GeneralStore.Tests.Controllers.api

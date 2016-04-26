@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralStore.Tests", "Gener
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralStore.Data", "GeneralStore.Data\GeneralStore.Data.csproj", "{13532656-135B-44AE-8649-FB321D82E7DF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{42C7FDC1-C187-4100-A368-F6798158193B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{630784DF-FCF9-497D-9345-E9D69A64A0EE} = {42C7FDC1-C187-4100-A368-F6798158193B}
 	EndGlobalSection
 EndGlobal
