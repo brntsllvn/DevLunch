@@ -4,30 +4,45 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using GeneralStore.Data;
+using GeneralStore.Data.Models;
 
 namespace GeneralStore.Controllers.api
 {
     public class ProductController : ApiController
     {
-        // GET: api/Product
-        public IEnumerable<string> Get()
+        private readonly GeneralStoreDbContext _context;
+
+        public ProductController() : this(new GeneralStoreDbContext())
         {
-            return new string[] { "value1", "value2" };
+            
+        }
+
+        public ProductController(GeneralStoreDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Product
+        public IEnumerable<Product> Get()
+        {
+            return _context.Products;
         }
 
         // GET: api/Product/5
-        public string Get(int id)
+        public Product Get(int id)
         {
-            return "value";
+            return _context.Products.Find(id);
         }
 
         // POST: api/Product
-        public void Post([FromBody]string value)
+        public void Post([FromBody]Product value)
         {
+
         }
 
         // PUT: api/Product/5
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]Product value)
         {
         }
 
