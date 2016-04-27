@@ -1,12 +1,11 @@
 ﻿using System;
-using System.CodeDom;
-using System.Data;
 using System.Linq;
 using FizzWare.NBuilder;
 using GeneralStore.Controllers.api;
 using GeneralStore.Data;
 using GeneralStore.Data.Models;
 using NUnit.Framework;
+using Shouldly;
 
 namespace GeneralStore.Tests.Controllers.api
 {
@@ -27,9 +26,9 @@ namespace GeneralStore.Tests.Controllers.api
             var result = controller.Get();
 
             // Assert
-            Assert.NotNull(result);
-            Assert.That(result.Count(),Is.EqualTo(1));
-            Assert.That(result.First().Name,Is.EqualTo("one"));
+            result.ShouldNotBeNull();
+            result.Count().ShouldBe(1);
+            result.First().Name.ShouldBe("one");
         }
 
         [Test]
@@ -47,9 +46,9 @@ namespace GeneralStore.Tests.Controllers.api
             var result = controller.Get(id);
 
             // Assert
-            Assert.NotNull(result);
-            Assert.That(result.Id, Is.EqualTo(id));
-            Assert.That(result.Name, Is.EqualTo("one"));
+            result.ShouldNotBeNull();
+            result.Id.ShouldBe(id);
+            result.Name.ShouldBe("one");
         }
 
         [Test]
@@ -67,8 +66,8 @@ namespace GeneralStore.Tests.Controllers.api
 
             // Assert
             var getProductResult = controller.Get(product.Id);
-            Assert.That(getProductResult.Id, Is.EqualTo(product.Id));
-            Assert.That(getProductResult.Name, Is.EqualTo(product.Name));
+            getProductResult.Id.ShouldBe(product.Id);
+            getProductResult.Name.ShouldBe(product.Name);
         }
 
         [Test]
@@ -86,7 +85,7 @@ namespace GeneralStore.Tests.Controllers.api
             product.Id = existingProduct.Id;
 
             // Act
-            Assert.Throws<ArgumentException>(() => controller.Post(product));
+            Should.Throw<ArgumentException>(() => controller.Post(product));
         }
 
         [Test]
@@ -109,7 +108,7 @@ namespace GeneralStore.Tests.Controllers.api
 
             // Assert
             var getProductResult = controller.Get(productId);
-            Assert.That(getProductResult.Name,Is.EqualTo(updatedProduct.Name));
+            getProductResult.Name.ShouldBe(updatedProduct.Name);
         }
 
         [Test]
@@ -126,7 +125,7 @@ namespace GeneralStore.Tests.Controllers.api
             var otherProductId = existingProduct.Id + 1;
 
             // Act
-            Assert.Throws<ArgumentOutOfRangeException>(() => controller.Put(otherProductId, new Product { Name = "something else" }));
+            Should.Throw<ArgumentOutOfRangeException>(() => controller.Put(otherProductId, new Product { Name = "something else" }));
         }
 
         [Test]
@@ -141,7 +140,7 @@ namespace GeneralStore.Tests.Controllers.api
             var controller = new ProductController(context);
 
             // Act
-            Assert.Throws<ArgumentNullException>(() => controller.Put(existingProduct.Id, null));
+            Should.Throw<ArgumentNullException>(() => controller.Put(existingProduct.Id, null));
         }
 
         [Test]
@@ -160,7 +159,7 @@ namespace GeneralStore.Tests.Controllers.api
             controller.Delete(productId);
 
             // Assert
-            Assert.That(controller.Get(), Is.Empty);
+            controller.Get().ShouldBeEmpty();
         }
 
         [Test]
@@ -177,7 +176,7 @@ namespace GeneralStore.Tests.Controllers.api
             var otherProductId = existingProduct.Id + 1;
 
             // Act  / Assert
-            Assert.Throws<ArgumentOutOfRangeException>(() => { controller.Delete(otherProductId); });
+            Should.Throw<ArgumentOutOfRangeException>(() => { controller.Delete(otherProductId); });
         }
     }
 }
