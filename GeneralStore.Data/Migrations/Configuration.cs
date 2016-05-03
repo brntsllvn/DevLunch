@@ -1,23 +1,20 @@
-using GeneralStore.Data.Models;
+using DevLunch.Data.Models;
 
-namespace GeneralStore.Data.Migrations
+namespace DevLunch.Data.Migrations
 {
-    using System;
-    using System.Data.Entity;
     using System.Data.Entity.Migrations;
-    using System.Linq;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<GeneralStore.Data.GeneralStoreDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<DevLunchDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(GeneralStore.Data.GeneralStoreDbContext context)
+        protected override void Seed(DevLunchDbContext context)
         {
-            context.Products.AddOrUpdate(p=>p.Name,new Product {Name = "beef jerky"});
-            context.Products.AddOrUpdate(p=>p.Name,new Product {Name = "milk"});
+            context.Restaurants.AddOrUpdate( r => r.Name,new Restaurant {Name = "Lunch Box Lab"});
+            context.Restaurants.AddOrUpdate( r => r.Name,new Restaurant { Name = "Yard House"});
         }
     }
 }

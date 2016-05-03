@@ -49,7 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="GeneralStoreDbContext.cs" />
+    <Compile Include="DevLunchDbContext.cs" />
     <Compile Include="Migrations\201604262129146_0.1.cs" />
     <Compile Include="Migrations\201604262129146_0.1.Designer.cs">
       <DependentUpon>201604262129146_0.1.cs</DependentUpon>

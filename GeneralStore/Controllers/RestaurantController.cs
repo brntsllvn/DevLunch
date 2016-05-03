@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
-using GeneralStore.Data.Models;
+using DevLunch.Data.Models;
 
-namespace GeneralStore.Controllers
+namespace DevLunch.Controllers
 {
     public class RestaurantController : Controller
     {

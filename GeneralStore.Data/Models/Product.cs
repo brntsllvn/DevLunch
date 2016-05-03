@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace GeneralStore.Data.Models
+namespace DevLunch.Data.Models
 {
     public class Product
     {

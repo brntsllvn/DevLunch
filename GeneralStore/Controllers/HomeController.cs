@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace GeneralStore.Controllers
+namespace DevLunch.Controllers
 {
     public class HomeController : Controller
     {

@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
+using DevLunch.Controllers.api;
+using DevLunch.Data;
+using DevLunch.Data.Models;
 using FizzWare.NBuilder;
-using GeneralStore.Controllers.api;
-using GeneralStore.Data;
-using GeneralStore.Data.Models;
 using NUnit.Framework;
 using Shouldly;
 
-namespace GeneralStore.Tests.Controllers.api
+namespace DevLunch.Tests.Controllers.api
 {
     [TestFixture]
     public class ProductControllerTests
@@ -16,7 +16,7 @@ namespace GeneralStore.Tests.Controllers.api
         public void Get_NoParameters_ReturnsAllProduct()
         {
             // Arrange
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(new Product {Name = "one"});
             context.SaveChanges();
 
@@ -35,7 +35,7 @@ namespace GeneralStore.Tests.Controllers.api
         public void Get_WithParam_ReturnsOneProduct()
         {
             // Arrange
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(new Product { Name = "one" });
             context.SaveChanges();
 
@@ -55,7 +55,7 @@ namespace GeneralStore.Tests.Controllers.api
         public void Post_CreatesNewProduct()
         {
             // Arrange
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
 
             var controller = new ProductController(context);
             
@@ -75,7 +75,7 @@ namespace GeneralStore.Tests.Controllers.api
         {
             // Arrange
             var existingProduct = Builder<Product>.CreateNew().Build();
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(existingProduct);
             context.SaveChanges();
 
@@ -93,7 +93,7 @@ namespace GeneralStore.Tests.Controllers.api
         {
             // Arrange
             var existingProduct = Builder<Product>.CreateNew().Build();
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(existingProduct);
             context.SaveChanges();
 
@@ -116,7 +116,7 @@ namespace GeneralStore.Tests.Controllers.api
         {
             // Arrange
             var existingProduct = Builder<Product>.CreateNew().Build();
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(existingProduct);
             context.SaveChanges();
 
@@ -133,7 +133,7 @@ namespace GeneralStore.Tests.Controllers.api
         {
             // Arrange
             var existingProduct = Builder<Product>.CreateNew().Build();
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(existingProduct);
             context.SaveChanges();
 
@@ -148,7 +148,7 @@ namespace GeneralStore.Tests.Controllers.api
         {
             // Arrange
             var existingProduct = Builder<Product>.CreateNew().Build();
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(existingProduct);
             context.SaveChanges();
 
@@ -167,7 +167,7 @@ namespace GeneralStore.Tests.Controllers.api
         {
             // Arrange
             var existingProduct = Builder<Product>.CreateNew().Build();
-            var context = new GeneralStoreDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Products.Add(existingProduct);
             context.SaveChanges();
 

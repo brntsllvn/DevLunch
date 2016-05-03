@@ -1,4 +1,4 @@
-﻿namespace GeneralStore.Data.Models
+﻿namespace DevLunch.Data.Models
 {
     public class Restaurant
     {
