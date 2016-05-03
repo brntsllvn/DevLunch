@@ -7,8 +7,8 @@
     <ProjectGuid>{13532656-135B-44AE-8649-FB321D82E7DF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeneralStore.Data</RootNamespace>
-    <AssemblyName>GeneralStore.Data</AssemblyName>
+    <RootNamespace>DevLunch.Data</RootNamespace>
+    <AssemblyName>DevLunch.Data</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

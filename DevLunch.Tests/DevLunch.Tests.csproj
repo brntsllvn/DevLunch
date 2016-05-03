@@ -7,8 +7,8 @@
     <ProjectGuid>{630784DF-FCF9-497D-9345-E9D69A64A0EE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeneralStore.Tests</RootNamespace>
-    <AssemblyName>GeneralStore.Tests</AssemblyName>
+    <RootNamespace>DevLunch.Tests</RootNamespace>
+    <AssemblyName>DevLunch.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

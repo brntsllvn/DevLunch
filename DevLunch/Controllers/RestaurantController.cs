@@ -7,7 +7,7 @@ namespace DevLunch.Controllers
     public class RestaurantController : Controller
     {
         private readonly DevLunchDbContext _context;
-
+    
         public RestaurantController() : this(new DevLunchDbContext())
         {
             

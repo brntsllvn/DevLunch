@@ -13,8 +13,8 @@
     <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GeneralStore</RootNamespace>
-    <AssemblyName>GeneralStore</AssemblyName>
+    <RootNamespace>DevLunch</RootNamespace>
+    <AssemblyName>DevLunch</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
     <UseIISExpress>true</UseIISExpress>
@@ -196,7 +196,7 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeneralStore.Data\DevLunch.Data.csproj">
+    <ProjectReference Include="..\DevLunch.Data\DevLunch.Data.csproj">
       <Project>{13532656-135b-44ae-8649-fb321d82e7df}</Project>
       <Name>DevLunch.Data</Name>
     </ProjectReference>
