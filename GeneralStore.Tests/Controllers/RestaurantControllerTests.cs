@@ -12,7 +12,7 @@ namespace DevLunch.Tests.Controllers
     public class RestaurantControllerTests
     {
         [Test]
-        public void Index_WithParam_ReturnsOneRestaurant()
+        public void Detail_ReturnsOneRestaurant()
         {
             // Arrange
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
@@ -22,13 +22,11 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var result = controller.Index();
+            var result = controller.Detail(context.Restaurants.First().Id);
 
             // Assert
-            result.Model.ShouldNotBeNull();
-            var data = result.Model as IEnumerable<Restaurant>;
-            data.Count().ShouldBe(1);
-            data.First().Name.ShouldBe("Brave Horse");
+            var data = result.Model;
+            data.ShouldNotBeNull();
         }
 
         [Test]
@@ -46,8 +44,8 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Index();
 
             // Assert
-            result.Model.ShouldNotBeNull();
             var data = result.Model as IEnumerable<Restaurant>;
+            data.ShouldNotBeNull();
             data.Count().ShouldBe(2);
             data.First().Name.ShouldBe("Brave Horse");
             data.Last().Name.ShouldBe("Yard House");

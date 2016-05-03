@@ -18,7 +18,7 @@ namespace DevLunch.Controllers
             _context = context;
         }
 
-        public ViewResult Index(int Id)
+        public ViewResult Detail(int Id)
         {
             var model = _context.Restaurants.Find(Id);
             return View(model);
