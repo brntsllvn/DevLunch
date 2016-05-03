@@ -1,15 +1,33 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using System.Web.Mvc;
-using DevLunch.Data.Models;
+using DevLunch.Data;
 
 namespace DevLunch.Controllers
 {
     public class RestaurantController : Controller
     {
-        // GET: Product
+        private readonly DevLunchDbContext _context;
+
+        public RestaurantController() : this(new DevLunchDbContext())
+        {
+            
+        }
+
+        public RestaurantController(DevLunchDbContext context)
+        {
+            _context = context;
+        }
+
+        public ViewResult Index(int Id)
+        {
+            var model = _context.Restaurants.Find(Id);
+            return View(model);
+        }
+
         public ViewResult Index()
         {
-            return View(new List<Restaurant> { new Restaurant() } );
+            var model = _context.Restaurants.ToList();
+            return View(model);
         }
     }
 }
