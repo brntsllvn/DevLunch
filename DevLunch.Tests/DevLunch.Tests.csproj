@@ -115,11 +115,11 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeneralStore.Data\DevLunch.Data.csproj">
+    <ProjectReference Include="..\DevLunch.Data\DevLunch.Data.csproj">
       <Project>{13532656-135b-44ae-8649-fb321d82e7df}</Project>
       <Name>DevLunch.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\GeneralStore\DevLunch.csproj">
+    <ProjectReference Include="..\DevLunch\DevLunch.csproj">
       <Project>{825eb829-948a-4374-b526-ac252d9e660a}</Project>
       <Name>DevLunch</Name>
     </ProjectReference>
