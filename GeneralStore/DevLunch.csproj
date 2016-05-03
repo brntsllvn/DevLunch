@@ -196,9 +196,9 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\GeneralStore.Data\GeneralStore.Data.csproj">
+    <ProjectReference Include="..\GeneralStore.Data\DevLunch.Data.csproj">
       <Project>{13532656-135b-44ae-8649-fb321d82e7df}</Project>
-      <Name>GeneralStore.Data</Name>
+      <Name>DevLunch.Data</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
-using GeneralStore.Data;
-using GeneralStore.Data.Models;
+using DevLunch.Data;
+using DevLunch.Data.Models;
 
-namespace GeneralStore.Controllers.api
+namespace DevLunch.Controllers.api
 {
     public class ProductController : ApiController
     {

@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralStore", "GeneralStore\GeneralStore.csproj", "{825EB829-948A-4374-B526-AC252D9E660A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch", "GeneralStore\DevLunch.csproj", "{825EB829-948A-4374-B526-AC252D9E660A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralStore.Tests", "GeneralStore.Tests\GeneralStore.Tests.csproj", "{630784DF-FCF9-497D-9345-E9D69A64A0EE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch.Tests", "GeneralStore.Tests\DevLunch.Tests.csproj", "{630784DF-FCF9-497D-9345-E9D69A64A0EE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeneralStore.Data", "GeneralStore.Data\GeneralStore.Data.csproj", "{13532656-135B-44AE-8649-FB321D82E7DF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch.Data", "GeneralStore.Data\DevLunch.Data.csproj", "{13532656-135B-44AE-8649-FB321D82E7DF}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{42C7FDC1-C187-4100-A368-F6798158193B}"
 EndProject

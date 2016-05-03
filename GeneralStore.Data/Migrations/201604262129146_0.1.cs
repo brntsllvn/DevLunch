@@ -1,4 +1,4 @@
-namespace GeneralStore.Data.Migrations
+namespace DevLunch.Data.Migrations
 {
     using System;
     using System.Data.Entity.Migrations;

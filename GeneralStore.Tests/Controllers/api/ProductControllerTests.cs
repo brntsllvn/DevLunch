@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Linq;
+using DevLunch.Controllers.api;
+using DevLunch.Data;
+using DevLunch.Data.Models;
 using FizzWare.NBuilder;
-using GeneralStore.Controllers.api;
-using GeneralStore.Data;
-using GeneralStore.Data.Models;
 using NUnit.Framework;
 using Shouldly;
 
-namespace GeneralStore.Tests.Controllers.api
+namespace DevLunch.Tests.Controllers.api
 {
     [TestFixture]
     public class ProductControllerTests

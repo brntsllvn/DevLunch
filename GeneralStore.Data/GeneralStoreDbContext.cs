@@ -1,9 +1,9 @@
 ﻿using System.Data.Common;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
-using GeneralStore.Data.Models;
+using DevLunch.Data.Models;
 
-namespace GeneralStore.Data
+namespace DevLunch.Data
 {
     public class GeneralStoreDbContext:DbContext
     {

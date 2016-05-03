@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using GeneralStore.Controllers;
-using GeneralStore.Data.Models;
+using DevLunch.Controllers;
+using DevLunch.Data.Models;
 using NUnit.Framework;
 using Shouldly;
 
-namespace GeneralStore.Tests.Controllers
+namespace DevLunch.Tests.Controllers
 {
     [TestFixture]
     public class RestaurantControllerTests
