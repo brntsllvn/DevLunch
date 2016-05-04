@@ -93,11 +93,11 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var results = controller.Create(new Restaurant {Name = "Brent's Pub"});
+            var results = controller.Create(new Restaurant {Name = "Brent's Pub"}) as RedirectToRouteResult;
 
             // Assert
             context.Restaurants.FirstOrDefault(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
-            // todo: add test for checking redirect route
+            results.RouteValues["action"].ShouldBe("Index");
         }
     }
 }
