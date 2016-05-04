@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using DevLunch.Controllers;
 using DevLunch.Data;
 using DevLunch.Data.Models;
+using FizzWare.NBuilder.Extensions;
 using NUnit.Framework;
 using Shouldly;
 
@@ -23,11 +25,25 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var result = controller.Detail(context.Restaurants.First().Id);
+            var Id = context.Restaurants.First().Id;
+            var result = controller.Detail(Id);
 
             // Assert
-            var data = result.Model;
+            var data = result.Model as Restaurant;
             data.ShouldNotBeNull();
+            data.Id.ShouldBe(1);
+            data.Name.ShouldBe("Brave Horse");
+        }
+
+        [Test]
+        public void Detail_ReturnsNullException_WhenRecordDoesNotExist()
+        {
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+
+            var controller = new RestaurantController(context);
+
+            // Act / Assert
+            Should.Throw<NullReferenceException>(() => { controller.Detail(999); });
         }
 
         [Test]

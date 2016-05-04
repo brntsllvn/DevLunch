@@ -22,8 +22,16 @@ namespace DevLunch.Controllers
 
         public ViewResult Detail(int Id)
         {
-            var model = _context.Restaurants.Find(Id);
-            return View(model);
+            if (_context.Restaurants.Find(Id) != null)
+            {
+                var model = _context.Restaurants.Find(Id);
+                return View(model);
+            }
+            else
+            {
+                throw new NullReferenceException();
+            }
+
         }
 
         public ViewResult Index()
