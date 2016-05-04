@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Web.Mvc;
 using DevLunch.Controllers;
 using DevLunch.Data;
 using DevLunch.Data.Models;
@@ -49,6 +50,38 @@ namespace DevLunch.Tests.Controllers
             data.Count().ShouldBe(2);
             data.First().Name.ShouldBe("Brave Horse");
             data.Last().Name.ShouldBe("Yard House");
+        }
+
+        [Test]
+        public void Create_Get_CreatesDefaultAndShowsItInTheView()
+        {
+            // Arrange
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+
+            var controller = new RestaurantController(context);
+
+            // Act
+            var results = controller.Create();
+
+            // Assert
+            results.ShouldNotBeNull();
+            results.Model.ShouldBeOfType<Restaurant>();
+        }
+
+        [Test]
+        public void Create_Post_CreatesNewRestaurantAndSavesToDb()
+        {
+            // Arrange
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+
+            var controller = new RestaurantController(context);
+
+            // Act
+            var results = controller.Create(new Restaurant {Name = "Brent's Pub"});
+
+            // Assert
+            context.Restaurants.FirstOrDefault(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
+            // todo: add test for checking redirect route
         }
     }
 }
