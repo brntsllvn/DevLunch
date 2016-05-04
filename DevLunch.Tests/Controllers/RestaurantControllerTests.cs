@@ -47,7 +47,7 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Index_NoParameters_ReturnsAllRestaurants()
+        public void Index_ReturnsAllRestaurants()
         {
             // Arrange
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
