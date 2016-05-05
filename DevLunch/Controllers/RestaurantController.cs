@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Data.Entity;
+using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
+using Microsoft.Ajax.Utilities;
 
 namespace DevLunch.Controllers
 {
@@ -32,7 +34,6 @@ namespace DevLunch.Controllers
             {
                 throw new NullReferenceException();
             }
-
         }
 
         public ViewResult Index()
