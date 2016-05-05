@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using DevLunch.Data;
@@ -52,6 +53,34 @@ namespace DevLunch.Controllers
             _context.Restaurants.Add(restaurant);
             _context.SaveChanges();
 
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public ViewResult Edit(int Id)
+        {
+            return View(_context.Restaurants.Find(Id));
+        }
+
+        [HttpPost]
+        public RedirectToRouteResult Edit(int Id, Restaurant edittedRestaurant)
+        {
+            var originalRestaurant = _context.Restaurants.Find(Id);
+
+            originalRestaurant.Name = edittedRestaurant.Name;
+            originalRestaurant.Longitude = edittedRestaurant.Longitude;
+            originalRestaurant.Latitude = edittedRestaurant.Latitude;
+
+            _context.SaveChanges();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public RedirectToRouteResult Delete(int Id)
+        {
+            var restaurant = _context.Restaurants.Find(Id);
+            _context.Restaurants.Remove(restaurant);
+            _context.SaveChanges();
             return RedirectToAction("Index");
         }
     }
