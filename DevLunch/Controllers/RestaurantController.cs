@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Validation;
 using System.Linq;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
-using Microsoft.Ajax.Utilities;
 
 namespace DevLunch.Controllers
 {
@@ -23,6 +20,7 @@ namespace DevLunch.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public ViewResult Detail(int Id)
         {
             if (_context.Restaurants.Find(Id) != null)
@@ -36,6 +34,7 @@ namespace DevLunch.Controllers
             }
         }
 
+        [HttpGet]
         public ViewResult Index()
         {
             var model = _context.Restaurants.ToList();
