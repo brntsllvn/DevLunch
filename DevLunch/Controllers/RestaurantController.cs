@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -71,7 +72,7 @@ namespace DevLunch.Controllers
         }
 
         [HttpGet]
-        public ActionResult Edit(int? Id)
+        public ViewResult Edit(int? Id)
         {
             if (Id == null)
             {
@@ -89,16 +90,16 @@ namespace DevLunch.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public RedirectToRouteResult Edit(int Id, Restaurant edittedRestaurant)
+        public ActionResult Edit([Bind(Include="Name,Longitude,Latitude")] Restaurant restaurant)
         {
-            var originalRestaurant = _context.Restaurants.Find(Id);
+            if (ModelState.IsValid)
+            {
+                _context.Entry(restaurant).State = EntityState.Modified;
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
 
-            originalRestaurant.Name = edittedRestaurant.Name;
-            originalRestaurant.Longitude = edittedRestaurant.Longitude;
-            originalRestaurant.Latitude = edittedRestaurant.Latitude;
-
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+            return View("Details",restaurant);
         }
 
         [HttpGet]

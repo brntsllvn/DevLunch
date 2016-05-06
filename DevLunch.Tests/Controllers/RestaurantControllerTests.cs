@@ -150,20 +150,6 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Edit_Get_ThrowsIfRestaurantIdIsNull()
-        {
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
-
-            // Act
-            var result = controller.Edit(null) as HttpStatusCodeResult;
-
-            // Assert
-            result.ShouldBeOfType<HttpStatusCodeResult>();
-            result.StatusCode.ShouldBe(400);
-        }
-
-        [Test]
         public void Edit_Get_ThrowsNotFoundIfRestaurantNotInDb()
         {
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
@@ -184,16 +170,21 @@ namespace DevLunch.Tests.Controllers
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
             context.SaveChanges();
+
             var controller = new RestaurantController(context);
 
+            var restaurantId = context.Restaurants.First().Id;
+            var editableRestaurantResult = controller.Edit(restaurantId);
+
+            var editableRestaurant = editableRestaurantResult.Model as Restaurant;
+            editableRestaurant.Name = "Linda's";
+
             // Act
-            var originalRestaurantId = context.Restaurants.First().Id;
-            var edittedRestaurant = new Restaurant {Name = "Linda's"};
-            var result = controller.Edit(originalRestaurantId, edittedRestaurant);
+            var result = controller.Edit(editableRestaurant);
 
             // Assert
             context.Restaurants.First().Name.ShouldBe("Linda's");
-            result.RouteValues["action"].ShouldBe("Index");
+            editableRestaurantResult.ViewName.ShouldBe("Details");
         }
 
         [Test]
