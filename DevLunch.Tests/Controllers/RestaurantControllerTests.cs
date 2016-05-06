@@ -76,7 +76,7 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var result = controller.Index();
+            var result = controller.Index() as ViewResult;
 
             // Assert
             var data = result.Model as IEnumerable<Restaurant>;
@@ -94,11 +94,11 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var results = controller.Create();
+            var result = controller.Create();
 
             // Assert
-            results.ShouldNotBeNull();
-            results.Model.ShouldBeOfType<Restaurant>();
+            result.ShouldNotBeNull();
+            result.Model.ShouldBeOfType<Restaurant>();
         }
 
         [Test]
@@ -109,11 +109,11 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var results = controller.Create(new Restaurant {Name = "Brent's Pub"}) as System.Web.Mvc.RedirectToRouteResult;
+            var result = controller.Create(new Restaurant {Name = "Brent's Pub"}) as System.Web.Mvc.RedirectToRouteResult;
 
             // Assert
             context.Restaurants.First(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
-            results.RouteValues["action"].ShouldBe("Index");
+            result.RouteValues["action"].ShouldBe("Index");
         }
 
         [Test]
@@ -125,10 +125,10 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var restaurant = new Restaurant { Name = "B" };
-            var results = controller.Create(restaurant) as ViewResult;
+            var result = controller.Create(restaurant) as ViewResult;
 
             // Assert
-            results.Model.ShouldBe(restaurant);
+            result.Model.ShouldBe(restaurant);
         }
 
         [Test]
@@ -142,11 +142,39 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var Id = context.Restaurants.First().Id;
-            var results = controller.Edit(Id);
+            var result = controller.Edit(Id) as ViewResult;
 
             // Assert
-            results.ShouldNotBeNull();
-            results.Model.ShouldBeOfType<Restaurant>();
+            result.ShouldNotBeNull();
+            result.Model.ShouldBeOfType<Restaurant>();
+        }
+
+        [Test]
+        public void Edit_Get_ThrowsIfRestaurantIdIsNull()
+        {
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act
+            var result = controller.Edit(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
+        public void Edit_Get_ThrowsNotFoundIfRestaurantNotInDb()
+        {
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act 
+            var result = controller.Details(999) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpNotFoundResult>();
+            result.StatusCode.ShouldBe(404);
         }
 
         [Test]
@@ -161,11 +189,11 @@ namespace DevLunch.Tests.Controllers
             // Act
             var originalRestaurantId = context.Restaurants.First().Id;
             var edittedRestaurant = new Restaurant {Name = "Linda's"};
-            var results = controller.Edit(originalRestaurantId, edittedRestaurant);
+            var result = controller.Edit(originalRestaurantId, edittedRestaurant);
 
             // Assert
             context.Restaurants.First().Name.ShouldBe("Linda's");
-            results.RouteValues["action"].ShouldBe("Index");
+            result.RouteValues["action"].ShouldBe("Index");
         }
 
         [Test]
@@ -179,11 +207,11 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var Id = context.Restaurants.First().Id;
-            var results = controller.Delete(Id);
+            var result = controller.Delete(Id);
 
             // Assert
             context.Restaurants.ShouldBeEmpty();
-            results.RouteValues["action"].ShouldBe("Index");
+            result.RouteValues["action"].ShouldBe("Index");
         }
     }
 }

@@ -39,7 +39,7 @@ namespace DevLunch.Controllers
         }
 
         [HttpGet]
-        public ViewResult Index()
+        public ActionResult Index()
         {
             var model = _context.Restaurants.ToList();
             return View(model);
@@ -71,12 +71,24 @@ namespace DevLunch.Controllers
         }
 
         [HttpGet]
-        public ViewResult Edit(int Id)
+        public ActionResult Edit(int? Id)
         {
-            return View(_context.Restaurants.Find(Id));
+            if (Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var restaurant = _context.Restaurants.Find(Id);
+
+            if (restaurant == null)
+            {
+                return new HttpNotFoundResult();
+            }
+            return View(restaurant);
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public RedirectToRouteResult Edit(int Id, Restaurant edittedRestaurant)
         {
             var originalRestaurant = _context.Restaurants.Find(Id);
