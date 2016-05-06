@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Web.Http.Results;
+using System.Web.Mvc;
 using DevLunch.Controllers;
 using DevLunch.Data;
 using DevLunch.Data.Models;
@@ -13,7 +16,7 @@ namespace DevLunch.Tests.Controllers
     public class RestaurantControllerTests
     {
         [Test]
-        public void Detail_ReturnsOneRestaurant()
+        public void Details_ReturnsOneRestaurant()
         {
             // Arrange
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
@@ -23,7 +26,7 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var Id = context.Restaurants.First().Id;
-            var result = controller.Details(Id);
+            var result = controller.Details(Id) as ViewResult;
 
             // Assert
             var data = result.Model as Restaurant;
@@ -33,13 +36,32 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
+        public void Details_WithoutIdThrows()
+        {
+            // Arrange
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act
+            var result = controller.Details(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
         public void Detail_ReturnsNullException_WhenRecordDoesNotExist()
         {
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             var controller = new RestaurantController(context);
 
-            // Act / Assert
-            Should.Throw<NullReferenceException>(() => { controller.Details(999); });
+            // Act 
+            var result = controller.Details(999) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpNotFoundResult>();
+            result.StatusCode.ShouldBe(404);
         }
 
         [Test]

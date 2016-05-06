@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
@@ -21,17 +22,20 @@ namespace DevLunch.Controllers
         }
 
         [HttpGet]
-        public ViewResult Details(int Id)
+        public ActionResult Details(int? Id)
         {
-            if (_context.Restaurants.Find(Id) != null)
+            if (Id == null)
             {
-                var model = _context.Restaurants.Find(Id);
-                return View(model);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            else
+
+            var restaurant = _context.Restaurants.Find(Id);
+
+            if (restaurant == null)
             {
-                throw new NullReferenceException();
+                return new HttpNotFoundResult();
             }
+            return View(restaurant);
         }
 
         [HttpGet]
