@@ -109,11 +109,26 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var results = controller.Create(new Restaurant {Name = "Brent's Pub"});
+            var results = controller.Create(new Restaurant {Name = "Brent's Pub"}) as System.Web.Mvc.RedirectToRouteResult;
 
             // Assert
             context.Restaurants.First(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
             results.RouteValues["action"].ShouldBe("Index");
+        }
+
+        [Test]
+        public void Create_Post_DoesNotSaveToDBAndReturnsCreateViewIfNameIsTooShort()
+        {
+            // Arrange
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act
+            var restaurant = new Restaurant { Name = "B" };
+            var results = controller.Create(restaurant) as ViewResult;
+
+            // Assert
+            results.Model.ShouldBe(restaurant);
         }
 
         [Test]

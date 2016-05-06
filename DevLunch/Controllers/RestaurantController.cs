@@ -52,12 +52,22 @@ namespace DevLunch.Controllers
         }
 
         [HttpPost]
-        public RedirectToRouteResult Create(Restaurant restaurant)
+        [ValidateAntiForgeryToken]
+        public ActionResult Create([Bind(Include = "Name, Longitude, Latitude")]Restaurant restaurant)
         {
-            _context.Restaurants.Add(restaurant);
-            _context.SaveChanges();
-
-            return RedirectToAction("Index");
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    _context.Restaurants.Add(restaurant);
+                    _context.SaveChanges();
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception)
+            {
+            }
+            return View(restaurant);
         }
 
         [HttpGet]
