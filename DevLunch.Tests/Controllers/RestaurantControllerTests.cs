@@ -23,7 +23,7 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var Id = context.Restaurants.First().Id;
-            var result = controller.Detail(Id);
+            var result = controller.Details(Id);
 
             // Assert
             var data = result.Model as Restaurant;
@@ -39,7 +39,7 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act / Assert
-            Should.Throw<NullReferenceException>(() => { controller.Detail(999); });
+            Should.Throw<NullReferenceException>(() => { controller.Details(999); });
         }
 
         [Test]

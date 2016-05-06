@@ -21,7 +21,7 @@ namespace DevLunch.Controllers
         }
 
         [HttpGet]
-        public ViewResult Detail(int Id)
+        public ViewResult Details(int Id)
         {
             if (_context.Restaurants.Find(Id) != null)
             {
