@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 using DevLunch.Controllers;
 using DevLunch.Data;
@@ -105,7 +108,7 @@ namespace DevLunch.Tests.Controllers
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             var controller = new RestaurantController(context);
 
-            // ed
+            // Act
             var result = controller.Create(new Restaurant {Name = "Brent's Pub"}) as System.Web.Mvc.RedirectToRouteResult;
 
             // Assert
@@ -147,6 +150,20 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
+        public void Edit_Get_ThrowsIfRestaurantIdIsNull()
+        {
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act
+            var result = controller.Edit(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
         public void Edit_Get_ThrowsNotFoundIfRestaurantNotInDb()
         {
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
@@ -167,21 +184,16 @@ namespace DevLunch.Tests.Controllers
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
             context.SaveChanges();
-
             var controller = new RestaurantController(context);
 
-            var restaurantId = context.Restaurants.First().Id;
-            var editableRestaurantResult = controller.Edit(restaurantId) as ViewResult;
-
-            var editableRestaurant = editableRestaurantResult.Model as Restaurant;
-            editableRestaurant.Name = "Linda's";
-
             // Act
-            var result = controller.Edit(editableRestaurant);
+            var originalRestaurantId = context.Restaurants.First().Id;
+            var edittedRestaurant = new Restaurant {Name = "Linda's"};
+            var result = controller.Edit(originalRestaurantId, edittedRestaurant);
 
             // Assert
             context.Restaurants.First().Name.ShouldBe("Linda's");
-            editableRestaurantResult.ViewName.ShouldBe("Details");
+            result.RouteValues["action"].ShouldBe("Index");
         }
 
         [Test]

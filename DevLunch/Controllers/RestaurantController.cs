@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -22,6 +21,7 @@ namespace DevLunch.Controllers
             _context = context;
         }
 
+        [HttpGet]
         public ActionResult Details(int? Id)
         {
             if (Id == null)
@@ -38,12 +38,14 @@ namespace DevLunch.Controllers
             return View(restaurant);
         }
 
+        [HttpGet]
         public ActionResult Index()
         {
             var model = _context.Restaurants.ToList();
             return View(model);
         }
 
+        [HttpGet]
         public ViewResult Create()
         {
             return View(new Restaurant());
@@ -68,6 +70,7 @@ namespace DevLunch.Controllers
             return View(restaurant);
         }
 
+        [HttpGet]
         public ActionResult Edit(int? Id)
         {
             if (Id == null)
@@ -86,18 +89,19 @@ namespace DevLunch.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include="Name,Longitude,Latitude")] Restaurant restaurant)
+        public RedirectToRouteResult Edit(int Id, Restaurant edittedRestaurant)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Entry(restaurant).State = EntityState.Modified;
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
+            var originalRestaurant = _context.Restaurants.Find(Id);
 
-            return View("Details",restaurant);
+            originalRestaurant.Name = edittedRestaurant.Name;
+            originalRestaurant.Longitude = edittedRestaurant.Longitude;
+            originalRestaurant.Latitude = edittedRestaurant.Latitude;
+
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
 
+        [HttpGet]
         public RedirectToRouteResult Delete(int Id)
         {
             var restaurant = _context.Restaurants.Find(Id);
