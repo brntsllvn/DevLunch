@@ -22,7 +22,6 @@ namespace DevLunch.Controllers
             _context = context;
         }
 
-        [HttpGet]
         public ActionResult Details(int? Id)
         {
             if (Id == null)
@@ -39,14 +38,12 @@ namespace DevLunch.Controllers
             return View(restaurant);
         }
 
-        [HttpGet]
         public ActionResult Index()
         {
             var model = _context.Restaurants.ToList();
             return View(model);
         }
 
-        [HttpGet]
         public ViewResult Create()
         {
             return View(new Restaurant());
@@ -71,8 +68,7 @@ namespace DevLunch.Controllers
             return View(restaurant);
         }
 
-        [HttpGet]
-        public ViewResult Edit(int? Id)
+        public ActionResult Edit(int? Id)
         {
             if (Id == null)
             {
@@ -102,7 +98,6 @@ namespace DevLunch.Controllers
             return View("Details",restaurant);
         }
 
-        [HttpGet]
         public RedirectToRouteResult Delete(int Id)
         {
             var restaurant = _context.Restaurants.Find(Id);

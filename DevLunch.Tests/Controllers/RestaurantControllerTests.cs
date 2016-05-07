@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web.Http.Results;
 using System.Web.Mvc;
 using DevLunch.Controllers;
 using DevLunch.Data;
@@ -108,7 +105,7 @@ namespace DevLunch.Tests.Controllers
             var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
             var controller = new RestaurantController(context);
 
-            // Act
+            // ed
             var result = controller.Create(new Restaurant {Name = "Brent's Pub"}) as System.Web.Mvc.RedirectToRouteResult;
 
             // Assert
@@ -174,7 +171,7 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             var restaurantId = context.Restaurants.First().Id;
-            var editableRestaurantResult = controller.Edit(restaurantId);
+            var editableRestaurantResult = controller.Edit(restaurantId) as ViewResult;
 
             var editableRestaurant = editableRestaurantResult.Model as Restaurant;
             editableRestaurant.Name = "Linda's";
