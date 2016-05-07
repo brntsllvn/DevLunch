@@ -12,17 +12,24 @@ namespace DevLunch.Tests.Controllers
     [TestFixture]
     public class RestaurantControllerTests
     {
+        private DevLunchDbContext _context;
+
+        [SetUp]
+        public void StuffStartsHere()
+        {
+            _context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+        }
+
         [Test]
         public void Details_ReturnsOneRestaurant()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-            context.SaveChanges();
-            var controller = new RestaurantController(context);
+            _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
+            _context.SaveChanges();
+            var controller = new RestaurantController(_context);
 
             // Act
-            var Id = context.Restaurants.First().Id;
+            var Id = _context.Restaurants.First().Id;
             var result = controller.Details(Id) as ViewResult;
 
             // Assert
@@ -36,8 +43,7 @@ namespace DevLunch.Tests.Controllers
         public void Details_WithoutIdThrows()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Details(null) as HttpStatusCodeResult;
@@ -50,8 +56,7 @@ namespace DevLunch.Tests.Controllers
         [Test]
         public void Detail_ReturnsNullException_WhenRecordDoesNotExist()
         {
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act 
             var result = controller.Details(999) as HttpStatusCodeResult;
@@ -65,12 +70,11 @@ namespace DevLunch.Tests.Controllers
         public void Index_ReturnsAllRestaurants()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-            context.Restaurants.Add(new Restaurant { Name = "Yard House" });
-            context.SaveChanges();
+            _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
+            _context.Restaurants.Add(new Restaurant { Name = "Yard House" });
+            _context.SaveChanges();
 
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Index() as ViewResult;
@@ -87,8 +91,7 @@ namespace DevLunch.Tests.Controllers
         public void Create_Get_CreatesDefaultAndShowsItInTheView()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Create();
@@ -102,14 +105,13 @@ namespace DevLunch.Tests.Controllers
         public void Create_Post_CreatesNewRestaurantAndSavesToDb()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Create(new Restaurant {Name = "Brent's Pub"}) as RedirectToRouteResult;
 
             // Assert
-            context.Restaurants.First(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
+            _context.Restaurants.First(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
             result.RouteValues["action"].ShouldBe("Index");
         }
 
@@ -117,8 +119,7 @@ namespace DevLunch.Tests.Controllers
         public void Create_Post_DoesNotSaveToDBAndReturnsCreateViewIfNameIsTooShort()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var restaurant = new Restaurant { Name = "B" };
@@ -132,13 +133,12 @@ namespace DevLunch.Tests.Controllers
         public void Edit_Get_ShowsRestaurantInTheView()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-            context.SaveChanges();
-            var controller = new RestaurantController(context);
+            _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
+            _context.SaveChanges();
+            var controller = new RestaurantController(_context);
 
             // Act
-            var Id = context.Restaurants.First().Id;
+            var Id = _context.Restaurants.First().Id;
             var result = controller.Edit(Id) as ViewResult;
 
             // Assert
@@ -149,8 +149,7 @@ namespace DevLunch.Tests.Controllers
         [Test]
         public void Edit_Get_ThrowsIfRestaurantIdIsNull()
         {
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Edit(null) as HttpStatusCodeResult;
@@ -163,8 +162,8 @@ namespace DevLunch.Tests.Controllers
         [Test]
         public void Edit_Get_ThrowsNotFoundIfRestaurantNotInDb()
         {
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var _context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(_context);
 
             // Act 
             var result = controller.Details(999) as HttpStatusCodeResult;
@@ -178,12 +177,11 @@ namespace DevLunch.Tests.Controllers
         public void Edit_Post_EditsRestaurantAndSavesToDb()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-            context.SaveChanges();
-            var controller = new RestaurantController(context);
+            _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
+            _context.SaveChanges();
+            var controller = new RestaurantController(_context);
 
-            var editableRestaurantId = context.Restaurants.First().Id;
+            var editableRestaurantId = _context.Restaurants.First().Id;
             var restaurantEditGetResult = controller.Edit(editableRestaurantId) as ViewResult;
 
             var restaurantToEdit = restaurantEditGetResult.Model as Restaurant;
@@ -195,7 +193,7 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Edit(editableRestaurantId, restaurantToEdit) as RedirectToRouteResult;
 
             // Assert
-            context.Restaurants.First().Name.ShouldBe("Linda's");
+            _context.Restaurants.First().Name.ShouldBe("Linda's");
             result.RouteValues["action"].ShouldBe("Index");
         }
 
@@ -203,17 +201,16 @@ namespace DevLunch.Tests.Controllers
         public void Delete_RemovesRestaurantFromDatabase()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-            context.SaveChanges();
-            var controller = new RestaurantController(context);
+            _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
+            _context.SaveChanges();
+            var controller = new RestaurantController(_context);
 
             // Act
-            var Id = context.Restaurants.First().Id;
+            var Id = _context.Restaurants.First().Id;
             var result = controller.Delete(Id) as RedirectToRouteResult;
 
             // Assert
-            context.Restaurants.ShouldBeEmpty();
+            _context.Restaurants.ShouldBeEmpty();
             result.RouteValues["action"].ShouldBe("Index");
         }
 
@@ -221,8 +218,7 @@ namespace DevLunch.Tests.Controllers
         public void Delete_ThrowsWhenIdIsNull()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Delete(null) as HttpStatusCodeResult;
@@ -236,8 +232,7 @@ namespace DevLunch.Tests.Controllers
         public void Delete_ThrowsWhenRestaurantCannotBeFound()
         {
             // Arrange
-            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-            var controller = new RestaurantController(context);
+            var controller = new RestaurantController(_context);
 
             // Act
             var result = controller.Delete(999) as HttpStatusCodeResult;
