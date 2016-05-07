@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Web.Http.Results;
 using System.Web.Mvc;
 using DevLunch.Controllers;
 using DevLunch.Data;
@@ -109,7 +106,7 @@ namespace DevLunch.Tests.Controllers
             var controller = new RestaurantController(context);
 
             // Act
-            var result = controller.Create(new Restaurant {Name = "Brent's Pub"}) as System.Web.Mvc.RedirectToRouteResult;
+            var result = controller.Create(new Restaurant {Name = "Brent's Pub"}) as RedirectToRouteResult;
 
             // Assert
             context.Restaurants.First(r=>r.Name == "Brent's Pub").ShouldNotBeNull();
@@ -186,10 +183,16 @@ namespace DevLunch.Tests.Controllers
             context.SaveChanges();
             var controller = new RestaurantController(context);
 
+            var editableRestaurantId = context.Restaurants.First().Id;
+            var restaurantEditGetResult = controller.Edit(editableRestaurantId) as ViewResult;
+
+            var restaurantToEdit = restaurantEditGetResult.Model as Restaurant;
+            restaurantToEdit.Name = "Linda's";
+            restaurantToEdit.Longitude = -5;
+            restaurantToEdit.Latitude = 5;
+
             // Act
-            var originalRestaurantId = context.Restaurants.First().Id;
-            var edittedRestaurant = new Restaurant {Name = "Linda's"};
-            var result = controller.Edit(originalRestaurantId, edittedRestaurant);
+            var result = controller.Edit(editableRestaurantId, restaurantToEdit) as RedirectToRouteResult;
 
             // Assert
             context.Restaurants.First().Name.ShouldBe("Linda's");
@@ -207,7 +210,7 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var Id = context.Restaurants.First().Id;
-            var result = controller.Delete(Id);
+            var result = controller.Delete(Id) as RedirectToRouteResult;
 
             // Assert
             context.Restaurants.ShouldBeEmpty();

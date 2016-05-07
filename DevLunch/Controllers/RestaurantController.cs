@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -89,20 +91,19 @@ namespace DevLunch.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public RedirectToRouteResult Edit(int Id, Restaurant edittedRestaurant)
+        public ActionResult Edit(int id, [Bind(Include = "Id, Name, Longitude, Latitude")] Restaurant restaurant)
         {
-            var originalRestaurant = _context.Restaurants.Find(Id);
+            if (ModelState.IsValid)
+            {
+                _context.Restaurants.AddOrUpdate(restaurant);
 
-            originalRestaurant.Name = edittedRestaurant.Name;
-            originalRestaurant.Longitude = edittedRestaurant.Longitude;
-            originalRestaurant.Latitude = edittedRestaurant.Latitude;
-
-            _context.SaveChanges();
-            return RedirectToAction("Index");
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View("Details", restaurant);
         }
 
-        [HttpGet]
-        public RedirectToRouteResult Delete(int Id)
+        public ActionResult Delete(int Id)
         {
             var restaurant = _context.Restaurants.Find(Id);
             _context.Restaurants.Remove(restaurant);
