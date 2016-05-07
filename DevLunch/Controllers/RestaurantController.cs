@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
@@ -23,7 +22,6 @@ namespace DevLunch.Controllers
             _context = context;
         }
 
-        [HttpGet]
         public ActionResult Details(int? Id)
         {
             if (Id == null)
@@ -40,14 +38,12 @@ namespace DevLunch.Controllers
             return View(restaurant);
         }
 
-        [HttpGet]
         public ActionResult Index()
         {
             var model = _context.Restaurants.ToList();
             return View(model);
         }
 
-        [HttpGet]
         public ViewResult Create()
         {
             return View(new Restaurant());
@@ -72,7 +68,6 @@ namespace DevLunch.Controllers
             return View(restaurant);
         }
 
-        [HttpGet]
         public ActionResult Edit(int? Id)
         {
             if (Id == null)
@@ -103,9 +98,20 @@ namespace DevLunch.Controllers
             return View("Details", restaurant);
         }
 
-        public ActionResult Delete(int Id)
+        public ActionResult Delete(int? Id)
         {
+            if (Id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             var restaurant = _context.Restaurants.Find(Id);
+
+            if (restaurant == null)
+            {
+                return new HttpNotFoundResult();
+            }
+
             _context.Restaurants.Remove(restaurant);
             _context.SaveChanges();
             return RedirectToAction("Index");

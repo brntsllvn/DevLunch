@@ -216,5 +216,35 @@ namespace DevLunch.Tests.Controllers
             context.Restaurants.ShouldBeEmpty();
             result.RouteValues["action"].ShouldBe("Index");
         }
+
+        [Test]
+        public void Delete_ThrowsWhenIdIsNull()
+        {
+            // Arrange
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act
+            var result = controller.Delete(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
+        public void Delete_ThrowsWhenRestaurantCannotBeFound()
+        {
+            // Arrange
+            var context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new RestaurantController(context);
+
+            // Act
+            var result = controller.Delete(999) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpNotFoundResult>();
+            result.StatusCode.ShouldBe(404);
+        }
     }
 }
