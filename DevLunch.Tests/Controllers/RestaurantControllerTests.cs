@@ -198,7 +198,7 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Delete_RemovesRestaurantFromDatabase()
+        public void Delete_Get_ReturnsViewWithRestaurant()
         {
             // Arrange
             _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
@@ -207,11 +207,11 @@ namespace DevLunch.Tests.Controllers
 
             // Act
             var Id = _context.Restaurants.First().Id;
-            var result = controller.Delete(Id) as RedirectToRouteResult;
+            var result = controller.Delete(Id) as ViewResult;
 
             // Assert
-            _context.Restaurants.ShouldBeEmpty();
-            result.RouteValues["action"].ShouldBe("Index");
+            result.Model.ShouldNotBeNull();
+            result.Model.ShouldBeOfType<Restaurant>();
         }
 
         [Test]
@@ -240,6 +240,27 @@ namespace DevLunch.Tests.Controllers
             // Assert
             result.ShouldBeOfType<HttpNotFoundResult>();
             result.StatusCode.ShouldBe(404);
+        }
+
+        [Test]
+        public void Delete_Post_RemovesRestaurantFromDb()
+        {
+            // Arrange
+            _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
+            _context.SaveChanges();
+            var controller = new RestaurantController(_context);
+
+            var restaurantId = _context.Restaurants.First().Id;
+            var restaurantDeleteGetResult = controller.Delete(restaurantId) as ViewResult;
+
+            var restaurantToDelete = restaurantDeleteGetResult.Model as Restaurant;
+
+            // Act
+            var result = controller.DeleteConfirmed(restaurantToDelete.Id) as RedirectToRouteResult;
+
+            // Assert
+            _context.Restaurants.Count().ShouldBe(0);
+            result.RouteValues["action"].ShouldBe("Index");
         }
     }
 }

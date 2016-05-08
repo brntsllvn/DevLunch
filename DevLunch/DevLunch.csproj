@@ -234,6 +234,7 @@
     <Content Include="Views\Restaurant\Create.cshtml" />
     <Content Include="Views\Restaurant\Edit.cshtml" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
+    <Content Include="Views\Restaurant\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

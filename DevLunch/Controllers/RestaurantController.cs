@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Net;
@@ -90,8 +91,7 @@ namespace DevLunch.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Restaurants.AddOrUpdate(restaurant);
-
+                _context.Entry(restaurant).State = EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -112,6 +112,14 @@ namespace DevLunch.Controllers
                 return new HttpNotFoundResult();
             }
 
+            return View("Delete", restaurant);
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public ActionResult DeleteConfirmed(int Id)
+        {
+            var restaurant = _context.Restaurants.Find(Id);
             _context.Restaurants.Remove(restaurant);
             _context.SaveChanges();
             return RedirectToAction("Index");
