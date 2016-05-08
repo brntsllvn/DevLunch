@@ -140,6 +140,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\LunchesController.cs" />
     <Compile Include="Controllers\RestaurantController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -234,6 +235,11 @@
     <Content Include="Views\Restaurant\Edit.cshtml" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
     <Content Include="Views\Restaurant\Delete.cshtml" />
+    <Content Include="Views\Lunches\Create.cshtml" />
+    <Content Include="Views\Lunches\Delete.cshtml" />
+    <Content Include="Views\Lunches\Details.cshtml" />
+    <Content Include="Views\Lunches\Edit.cshtml" />
+    <Content Include="Views\Lunches\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

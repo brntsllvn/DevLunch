@@ -1,0 +1,35 @@
+﻿@model DevLunch.Data.Models.Lunch
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Lunch</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Host)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Host)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.MeetingTime)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.MeetingTime)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

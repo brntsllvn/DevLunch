@@ -17,6 +17,7 @@ namespace DevLunch.Data
             
         }
 
-        public DbSet<Restaurant> Restaurants { get; set; }      
+        public DbSet<Restaurant> Restaurants { get; set; }
+        public DbSet<Lunch> Lunches { get; set; }
     }
 }
