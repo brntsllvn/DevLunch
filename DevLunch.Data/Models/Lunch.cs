@@ -14,7 +14,6 @@ namespace DevLunch.Data.Models
         [Required]
         public DateTime MeetingTime { get; set; }
 
-        [Required]
         public Restaurant DestinationRestaurant { get; set; }
     }
 }

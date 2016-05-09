@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web.Mvc;
 using DevLunch.Data;
@@ -48,230 +50,288 @@ namespace DevLunch.Tests.Controllers
             data.Id.ShouldBe(1);
             data.Host.ShouldBe("Brent");
         }
+
+        [Test]
+        public void Details_WithoutIdThrows()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Details(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
+        public void Detail_ReturnsNullException_WhenRecordDoesNotExist()
+        {
+            var controller = new LunchesController(_context);
+
+            // Act 
+            var result = controller.Details(999) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpNotFoundResult>();
+            result.StatusCode.ShouldBe(404);
+        }
+
+        [Test]
+        public void Index_ReturnsAllLunches()
+        {
+            // Arrange
+            var Lunches = new List<Lunch>
+            {
+                new Lunch
+                {
+                     Host = "Brent",
+                     DestinationRestaurant = new Restaurant
+                     {
+                         Name = "Lunchbox Labs",
+                         Latitude = 55,
+                         Longitude = 99
+                     },
+                     MeetingTime = new DateTime(1999,12,31)
+                },
+                new Lunch
+                {
+                     Host = "Josh",
+                     DestinationRestaurant = new Restaurant
+                    {
+                        Name = "Lunchbox Labs",
+                        Latitude = 55,
+                        Longitude = 99
+                    },
+                    MeetingTime = new DateTime(1999,12,31)
+                }
+            };
+
+            _context.Lunches.AddRange(Lunches);
+            _context.SaveChanges();
+
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Index() as ViewResult;
+
+            // Assert
+            var data = result.Model as IEnumerable<Lunch>;
+            data.ShouldNotBeNull();
+            data.Count().ShouldBe(2);
+            data.First().Host.ShouldBe("Brent");
+            data.Last().Host.ShouldBe("Josh");
+        }
+
+        [Test]
+        public void Create_Get_CreatesDefaultAndShowsItInTheView()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Create() as ViewResult;
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.Model.ShouldBeOfType<Lunch>();
+        }
+
+        [Test]
+        public void Create_Post_CreatesNewLunchAndSavesToDb()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Create(new Lunch
+            {
+                Host = "Brent",
+                DestinationRestaurant = new Restaurant
+                {
+                    Name = "Lunchbox Labs",
+                    Longitude = 55,
+                    Latitude = 42
+                },
+                MeetingTime = new DateTime(1999, 12, 31)
+            }) as RedirectToRouteResult;
+
+            // Assert
+            _context.Lunches.First().ShouldNotBeNull();
+            result.RouteValues["action"].ShouldBe("Index");
+        }
+
+        [Test]
+        public void Edit_Get_ShowsRestaurantInTheView()
+        {
+            // Arrange
+            _context.Lunches.Add(new Lunch
+            {
+                Host = "Brent",
+                DestinationRestaurant = new Restaurant
+                {
+                    Name = "Lunchbox Labs",
+                    Longitude = 55,
+                    Latitude = 42
+                },
+                MeetingTime = new DateTime(1999, 12, 31)
+            });
+            _context.SaveChanges();
+            var controller = new LunchesController(_context);
+
+            // Act
+            var Id = _context.Lunches.First().Id;
+            var result = controller.Edit(Id) as ViewResult;
+
+            // Assert
+            result.ShouldNotBeNull();
+            result.Model.ShouldBeOfType<Lunch>();
+        }
+
+        [Test]
+        public void Edit_Get_ThrowsIfRecordIdIsNull()
+        {
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Edit(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
+        public void Edit_Get_ThrowsNotFoundIfRecordNotInDb()
+        {
+            var _context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
+            var controller = new LunchesController(_context);
+
+            // Act 
+            var result = controller.Details(999) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpNotFoundResult>();
+            result.StatusCode.ShouldBe(404);
+        }
+
+        [Test]
+        public void Edit_Post_EditsRecordAndSavesToDb()
+        {
+            // Arrange
+            _context.Lunches.Add(new Lunch
+            {
+                Host = "Brent",
+                DestinationRestaurant = new Restaurant
+                {
+                    Name = "Lunchbox Labs",
+                    Longitude = 55,
+                    Latitude = 42
+                },
+                MeetingTime = new DateTime(1999, 12, 31)
+            });
+            _context.SaveChanges();
+            var controller = new LunchesController(_context);
+
+            var editableRecordId = _context.Restaurants.First().Id;
+            var recordEditGetResult = controller.Edit(editableRecordId) as ViewResult;
+
+            var recordToEdit = recordEditGetResult.Model as Lunch;
+            recordToEdit.Host = "Bob";
+
+            // Act
+            var result = controller.Edit(editableRecordId, recordToEdit) as RedirectToRouteResult;
+
+            // Assert
+            _context.Lunches.First().Host.ShouldBe("Bob");
+            result.RouteValues["action"].ShouldBe("Index");
+        }
+
+        [Test]
+        public void Delete_Get_ReturnsViewWithRecord()
+        {
+            // Arrange
+            _context.Lunches.Add(new Lunch
+            {
+                Host = "Brent",
+                DestinationRestaurant = new Restaurant
+                {
+                    Name = "Lunchbox Labs",
+                    Longitude = 55,
+                    Latitude = 42
+                },
+                MeetingTime = new DateTime(1999, 12, 31)
+            });
+            _context.SaveChanges();
+            var controller = new LunchesController(_context);
+
+            // Act
+            var Id = _context.Lunches.First().Id;
+            var result = controller.Delete(Id) as ViewResult;
+
+            // Assert
+            result.Model.ShouldNotBeNull();
+            result.Model.ShouldBeOfType<Lunch>();
+        }
+
+        [Test]
+        public void Delete_ThrowsWhenIdIsNull()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Delete(null) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            result.StatusCode.ShouldBe(400);
+        }
+
+        [Test]
+        public void Delete_ThrowsWhenRecordCannotBeFound()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Delete(999) as HttpStatusCodeResult;
+
+            // Assert
+            result.ShouldBeOfType<HttpNotFoundResult>();
+            result.StatusCode.ShouldBe(404);
+        }
+
+        [Test]
+        public void Delete_Post_RemovesRecordFromDb()
+        {
+            // Arrange
+            _context.Lunches.Add(new Lunch
+            {
+                Host = "Brent",
+                DestinationRestaurant = new Restaurant
+                {
+                    Name = "Lunchbox Labs",
+                    Longitude = 55,
+                    Latitude = 42
+                },
+                MeetingTime = new DateTime(1999, 12, 31)
+            });
+            _context.SaveChanges();
+            var controller = new LunchesController(_context);
+
+            var recordId = _context.Lunches.First().Id;
+            var recordDeleteGetResult = controller.Delete(recordId) as ViewResult;
+
+            var recordToDelete = recordDeleteGetResult.Model as Lunch;
+
+            // Act
+            var result = controller.DeleteConfirmed(recordToDelete.Id) as RedirectToRouteResult;
+
+            // Assert
+            _context.Lunches.Count().ShouldBe(0);
+            result.RouteValues["action"].ShouldBe("Index");
+        }
     }
-
-    //[Test]
-        //public void Details_WithoutIdThrows()
-        //{
-        //    // Arrange
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Details(null) as HttpStatusCodeResult;
-
-        //    // Assert
-        //    result.ShouldBeOfType<HttpStatusCodeResult>();
-        //    result.StatusCode.ShouldBe(400);
-        //}
-
-        //[Test]
-        //public void Detail_ReturnsNullException_WhenRecordDoesNotExist()
-        //{
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act 
-        //    var result = controller.Details(999) as HttpStatusCodeResult;
-
-        //    // Assert
-        //    result.ShouldBeOfType<HttpNotFoundResult>();
-        //    result.StatusCode.ShouldBe(404);
-        //}
-
-        //[Test]
-        //public void Index_ReturnsAllRestaurants()
-        //{
-        //    // Arrange
-        //    _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-        //    _context.Restaurants.Add(new Restaurant { Name = "Yard House" });
-        //    _context.SaveChanges();
-
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Index() as ViewResult;
-
-        //    // Assert
-        //    var data = result.Model as IEnumerable<Restaurant>;
-        //    data.ShouldNotBeNull();
-        //    data.Count().ShouldBe(2);
-        //    data.First().Name.ShouldBe("Brave Horse");
-        //    data.Last().Name.ShouldBe("Yard House");
-        //}
-
-        //[Test]
-        //public void Create_Get_CreatesDefaultAndShowsItInTheView()
-        //{
-        //    // Arrange
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Create();
-
-        //    // Assert
-        //    result.ShouldNotBeNull();
-        //    result.Model.ShouldBeOfType<Restaurant>();
-        //}
-
-        //[Test]
-        //public void Create_Post_CreatesNewRestaurantAndSavesToDb()
-        //{
-        //    // Arrange
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Create(new Restaurant { Name = "Brent's Pub" }) as RedirectToRouteResult;
-
-        //    // Assert
-        //    _context.Restaurants.First(r => r.Name == "Brent's Pub").ShouldNotBeNull();
-        //    result.RouteValues["action"].ShouldBe("Index");
-        //}
-
-        //[Test]
-        //public void Create_Post_DoesNotSaveToDBAndReturnsCreateViewIfNameIsTooShort()
-        //{
-        //    // Arrange
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var restaurant = new Restaurant { Name = "B" };
-        //    var result = controller.Create(restaurant) as ViewResult;
-
-        //    // Assert
-        //    result.Model.ShouldBe(restaurant);
-        //}
-
-        //[Test]
-        //public void Edit_Get_ShowsRestaurantInTheView()
-        //{
-        //    // Arrange
-        //    _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-        //    _context.SaveChanges();
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var Id = _context.Restaurants.First().Id;
-        //    var result = controller.Edit(Id) as ViewResult;
-
-        //    // Assert
-        //    result.ShouldNotBeNull();
-        //    result.Model.ShouldBeOfType<Restaurant>();
-        //}
-
-        //[Test]
-        //public void Edit_Get_ThrowsIfRestaurantIdIsNull()
-        //{
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Edit(null) as HttpStatusCodeResult;
-
-        //    // Assert
-        //    result.ShouldBeOfType<HttpStatusCodeResult>();
-        //    result.StatusCode.ShouldBe(400);
-        //}
-
-        //[Test]
-        //public void Edit_Get_ThrowsNotFoundIfRestaurantNotInDb()
-        //{
-        //    var _context = new DevLunchDbContext(Effort.DbConnectionFactory.CreateTransient());
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act 
-        //    var result = controller.Details(999) as HttpStatusCodeResult;
-
-        //    // Assert
-        //    result.ShouldBeOfType<HttpNotFoundResult>();
-        //    result.StatusCode.ShouldBe(404);
-        //}
-
-        //[Test]
-        //public void Edit_Post_EditsRestaurantAndSavesToDb()
-        //{
-        //    // Arrange
-        //    _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-        //    _context.SaveChanges();
-        //    var controller = new RestaurantController(_context);
-
-        //    var editableRestaurantId = _context.Restaurants.First().Id;
-        //    var restaurantEditGetResult = controller.Edit(editableRestaurantId) as ViewResult;
-
-        //    var restaurantToEdit = restaurantEditGetResult.Model as Restaurant;
-        //    restaurantToEdit.Name = "Linda's";
-        //    restaurantToEdit.Longitude = -5;
-        //    restaurantToEdit.Latitude = 5;
-
-        //    // Act
-        //    var result = controller.Edit(editableRestaurantId, restaurantToEdit) as RedirectToRouteResult;
-
-        //    // Assert
-        //    _context.Restaurants.First().Name.ShouldBe("Linda's");
-        //    result.RouteValues["action"].ShouldBe("Index");
-        //}
-
-        //[Test]
-        //public void Delete_Get_ReturnsViewWithRestaurant()
-        //{
-        //    // Arrange
-        //    _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-        //    _context.SaveChanges();
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var Id = _context.Restaurants.First().Id;
-        //    var result = controller.Delete(Id) as ViewResult;
-
-        //    // Assert
-        //    result.Model.ShouldNotBeNull();
-        //    result.Model.ShouldBeOfType<Restaurant>();
-        //}
-
-        //[Test]
-        //public void Delete_ThrowsWhenIdIsNull()
-        //{
-        //    // Arrange
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Delete(null) as HttpStatusCodeResult;
-
-        //    // Assert
-        //    result.ShouldBeOfType<HttpStatusCodeResult>();
-        //    result.StatusCode.ShouldBe(400);
-        //}
-
-        //[Test]
-        //public void Delete_ThrowsWhenRestaurantCannotBeFound()
-        //{
-        //    // Arrange
-        //    var controller = new RestaurantController(_context);
-
-        //    // Act
-        //    var result = controller.Delete(999) as HttpStatusCodeResult;
-
-        //    // Assert
-        //    result.ShouldBeOfType<HttpNotFoundResult>();
-        //    result.StatusCode.ShouldBe(404);
-        //}
-
-        //[Test]
-        //public void Delete_Post_RemovesRestaurantFromDb()
-        //{
-        //    // Arrange
-        //    _context.Restaurants.Add(new Restaurant { Name = "Brave Horse" });
-        //    _context.SaveChanges();
-        //    var controller = new RestaurantController(_context);
-
-        //    var restaurantId = _context.Restaurants.First().Id;
-        //    var restaurantDeleteGetResult = controller.Delete(restaurantId) as ViewResult;
-
-        //    var restaurantToDelete = restaurantDeleteGetResult.Model as Restaurant;
-
-        //    // Act
-        //    var result = controller.DeleteConfirmed(restaurantToDelete.Id) as RedirectToRouteResult;
-
-        //    // Assert
-        //    _context.Restaurants.Count().ShouldBe(0);
-        //    result.RouteValues["action"].ShouldBe("Index");
-        //}
-    //}
 }
