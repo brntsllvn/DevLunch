@@ -4,6 +4,7 @@ using System.Net;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
+using DevLunch.ViewModels;
 
 namespace DevLunch.Controllers
 {
@@ -46,12 +47,15 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-            return View(new Lunch());
+            var lunchViewModel = new LunchViewModel
+            {
+                Lunch = new Lunch(),
+                RestaurantChoices = _context.Restaurants.ToList()
+            };
+            return View(lunchViewModel);
         }
 
         // POST: Lunches/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "Id,Host,MeetingTime")] Lunch lunch)
