@@ -12,9 +12,10 @@ namespace DevLunch.Data.Models
         public string Host { get; set; }
 
         [Required]
-        public DateTime MeetingTime { get; set; }
+        [DataType(DataType.Date)]
+        public DateTime? MeetingTime { get; set; }
 
-        public Restaurant DestinationRestaurant { get; set; }
+        public Restaurant Restaurant { get; set; }
     }
 }
  

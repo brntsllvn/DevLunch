@@ -146,7 +146,6 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ViewModels\LunchViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
@@ -236,14 +235,15 @@
     <Content Include="Views\Restaurant\Edit.cshtml" />
     <Content Include="Scripts\jquery-2.2.3.min.map" />
     <Content Include="Views\Restaurant\Delete.cshtml" />
-    <Content Include="Views\Lunches\Create.cshtml" />
     <Content Include="Views\Lunches\Delete.cshtml" />
     <Content Include="Views\Lunches\Details.cshtml" />
     <Content Include="Views\Lunches\Edit.cshtml" />
     <Content Include="Views\Lunches\Index.cshtml" />
+    <Content Include="Views\Lunches\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

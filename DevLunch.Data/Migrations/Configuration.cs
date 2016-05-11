@@ -23,7 +23,7 @@ namespace DevLunch.Data.Migrations
                 new Lunch
                 {
                      Host = "Brent",
-                     DestinationRestaurant = new Restaurant
+                     Restaurant = new Restaurant
                      {
                          Name = "Lunchbox Labs",
                          Latitude = 55,
@@ -34,7 +34,7 @@ namespace DevLunch.Data.Migrations
                 new Lunch
                 {
                      Host = "Brent",
-                     DestinationRestaurant = new Restaurant
+                     Restaurant = new Restaurant
                     {
                         Name = "Lunchbox Labs",
                         Latitude = 55,

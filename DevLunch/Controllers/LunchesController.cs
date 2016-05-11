@@ -4,7 +4,6 @@ using System.Net;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
-using DevLunch.ViewModels;
 
 namespace DevLunch.Controllers
 {
@@ -47,18 +46,13 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-            var lunchViewModel = new LunchViewModel
-            {
-                Lunch = new Lunch(),
-                RestaurantChoices = _context.Restaurants.ToList()
-            };
-            return View(lunchViewModel);
+            return View(new Lunch());
         }
 
         // POST: Lunches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Host,MeetingTime")] Lunch lunch)
+        public ActionResult Create([Bind(Include = "Id,Host,MeetingTime,Restaurant")] Lunch lunch)
         {
             if (ModelState.IsValid)
             {

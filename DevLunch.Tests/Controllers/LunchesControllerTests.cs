@@ -29,7 +29,7 @@ namespace DevLunch.Tests.Controllers
             _context.Lunches.Add(new Lunch
             {
                 Host = "Brent",
-                DestinationRestaurant = new Restaurant
+                Restaurant = new Restaurant
                 {
                     Name = "Lunchbox Labs",
                     Longitude = 55,
@@ -87,7 +87,7 @@ namespace DevLunch.Tests.Controllers
                 new Lunch
                 {
                      Host = "Brent",
-                     DestinationRestaurant = new Restaurant
+                     Restaurant = new Restaurant
                      {
                          Name = "Lunchbox Labs",
                          Latitude = 55,
@@ -98,7 +98,7 @@ namespace DevLunch.Tests.Controllers
                 new Lunch
                 {
                      Host = "Josh",
-                     DestinationRestaurant = new Restaurant
+                     Restaurant = new Restaurant
                     {
                         Name = "Lunchbox Labs",
                         Latitude = 55,
@@ -148,7 +148,7 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Create(new Lunch
             {
                 Host = "Brent",
-                DestinationRestaurant = new Restaurant
+                Restaurant = new Restaurant
                 {
                     Name = "Lunchbox Labs",
                     Longitude = 55,
@@ -169,7 +169,7 @@ namespace DevLunch.Tests.Controllers
             _context.Lunches.Add(new Lunch
             {
                 Host = "Brent",
-                DestinationRestaurant = new Restaurant
+                Restaurant = new Restaurant
                 {
                     Name = "Lunchbox Labs",
                     Longitude = 55,
@@ -223,7 +223,7 @@ namespace DevLunch.Tests.Controllers
             _context.Lunches.Add(new Lunch
             {
                 Host = "Brent",
-                DestinationRestaurant = new Restaurant
+                Restaurant = new Restaurant
                 {
                     Name = "Lunchbox Labs",
                     Longitude = 55,
@@ -255,7 +255,7 @@ namespace DevLunch.Tests.Controllers
             _context.Lunches.Add(new Lunch
             {
                 Host = "Brent",
-                DestinationRestaurant = new Restaurant
+                Restaurant = new Restaurant
                 {
                     Name = "Lunchbox Labs",
                     Longitude = 55,
@@ -310,7 +310,7 @@ namespace DevLunch.Tests.Controllers
             _context.Lunches.Add(new Lunch
             {
                 Host = "Brent",
-                DestinationRestaurant = new Restaurant
+                Restaurant = new Restaurant
                 {
                     Name = "Lunchbox Labs",
                     Longitude = 55,
