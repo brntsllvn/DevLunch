@@ -46,7 +46,9 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-            return View(new Lunch());
+            var lunch = new Lunch();
+            ViewData["Restaurants"] = new SelectList(_context.Restaurants.Select(r=>r.Name), lunch.Restaurant);
+            return View(lunch);
         }
 
         // POST: Lunches/Create
