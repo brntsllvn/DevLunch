@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Web.Mvc;
 using DevLunch.Data;
@@ -42,8 +41,8 @@ namespace DevLunch.Tests.Controllers
             var controller = new LunchesController(_context);
 
             // Act
-            var Id = _context.Lunches.First().Id;
-            var result = controller.Details(Id) as ViewResult;
+            var id = _context.Lunches.First().Id;
+            var result = controller.Details(id) as ViewResult;
 
             // Assert
             var data = result.Model as Lunch;

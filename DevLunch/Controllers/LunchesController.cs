@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -11,7 +10,7 @@ namespace DevLunch.Controllers
 {
     public class LunchesController : Controller
     {
-        private DevLunchDbContext _context = new DevLunchDbContext();
+        private readonly DevLunchDbContext _context;
 
         public LunchesController() : this(new DevLunchDbContext())
         {
@@ -84,7 +83,7 @@ namespace DevLunch.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(lunch);
+            return View("Create", lunchViewModel);
         }
 
         // GET: Lunches/Edit/5
@@ -93,22 +92,27 @@ namespace DevLunch.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            Lunch lunch = _context.Lunches.Find(id);
+            var lunch = _context
+                .Lunches
+                .Include(l => l.Restaurant)
+                .First(l => l.Id == id);
 
             if (lunch == null)
                 return HttpNotFound();
+
+            var selectedRestaurantId = lunch.Restaurant.Id;
 
             var lunchViewModel = new LunchViewModel
             {
                 Host = lunch.Host,
                 MeetingTime = lunch.MeetingTime,
-                // SelectedRestaurantId = lunch.Restaurant.Id,
-                Restaurants = _context.Restaurants.ToList()
+                Restaurants = _context.Restaurants
                     .Select(r => new SelectListItem
                     {
                         Value = r.Id.ToString(),
-                        Text = r.Name
-                    })
+                        Text = r.Name,
+                        Selected = r.Id == selectedRestaurantId
+                    }).ToList()
             };
             return View(lunchViewModel);
         }
@@ -118,9 +122,12 @@ namespace DevLunch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int Id, [Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
+        public ActionResult Edit(int id, [Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
         {
-            var lunch = _context.Lunches.Find(Id);
+            var lunch = _context
+                .Lunches
+                .Include(l => l.Restaurant)
+                .First(l => l.Id == id);
 
             if (ModelState.IsValid)
             {
@@ -132,7 +139,7 @@ namespace DevLunch.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(lunch);
+            return View("Edit", lunchViewModel);
         }
 
         // GET: Lunches/Delete/5
