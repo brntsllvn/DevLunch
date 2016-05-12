@@ -1,9 +1,11 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
+using DevLunch.ViewModels;
 
 namespace DevLunch.Controllers
 {
@@ -46,20 +48,35 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-            var lunch = new Lunch();
-            ViewData["Restaurants"] = new SelectList(_context.Restaurants.Select(r=>r.Name), lunch.Restaurant);
-            return View(lunch);
+            var lunchViewModel = new LunchViewModel
+            {
+                Restaurants = _context.Restaurants.ToList()
+                    .Select(r => new SelectListItem
+                    {
+                        Value = r.Id.ToString(),
+                        Text = r.Name
+                    })
+            };
+            
+            return View(lunchViewModel);
         }
 
         // POST: Lunches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Host,MeetingTime,Restaurant")] Lunch lunch)
+        public ActionResult Create([Bind(Include = "Id,Host,MeetingTime,SelectedRestaurantId")] LunchViewModel lunchViewModel)
         {
+            var lunch = new Lunch();
+
             if (ModelState.IsValid)
             {
+                lunch.Host = lunchViewModel.Host;
+                lunch.MeetingTime = lunchViewModel.MeetingTime;
+                lunch.Restaurant = _context.Restaurants.Find(lunchViewModel.SelectedRestaurantId);
+
                 _context.Lunches.Add(lunch);
                 _context.SaveChanges();
+
                 return RedirectToAction("Index");
             }
 

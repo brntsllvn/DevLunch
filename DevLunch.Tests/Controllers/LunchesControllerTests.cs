@@ -7,6 +7,7 @@ using DevLunch.Data;
 using DevLunch.Data.Models;
 using NUnit.Framework;
 using DevLunch.Controllers;
+using DevLunch.ViewModels;
 using Shouldly;
 
 namespace DevLunch.Tests.Controllers
@@ -135,7 +136,7 @@ namespace DevLunch.Tests.Controllers
 
             // Assert
             result.ShouldNotBeNull();
-            result.Model.ShouldBeOfType<Lunch>();
+            result.Model.ShouldBeOfType<LunchViewModel>();
         }
 
         [Test]
@@ -145,16 +146,11 @@ namespace DevLunch.Tests.Controllers
             var controller = new LunchesController(_context);
 
             // Act
-            var result = controller.Create(new Lunch
+            var result = controller.Create(new LunchViewModel 
             {
                 Host = "Brent",
-                Restaurant = new Restaurant
-                {
-                    Name = "Lunchbox Labs",
-                    Longitude = 55,
-                    Latitude = 42
-                },
-                MeetingTime = new DateTime(1999, 12, 31)
+                MeetingTime = new DateTime(1999, 12, 31),
+                SelectedRestaurantId = 1
             }) as RedirectToRouteResult;
 
             // Assert
