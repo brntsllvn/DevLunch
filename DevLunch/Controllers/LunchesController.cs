@@ -27,7 +27,11 @@ namespace DevLunch.Controllers
         // GET: Lunches
         public ActionResult Index()
         {
-            return View(_context.Lunches.ToList());
+            var lunches = _context.Lunches
+                .Include(lunch => lunch.Restaurant)
+                .ToList();
+
+            return View(lunches);
         }
 
         // GET: Lunches/Details/5
@@ -64,7 +68,7 @@ namespace DevLunch.Controllers
         // POST: Lunches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,Host,MeetingTime,SelectedRestaurantId")] LunchViewModel lunchViewModel)
+        public ActionResult Create([Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
         {
             var lunch = new Lunch();
 
@@ -87,15 +91,26 @@ namespace DevLunch.Controllers
         public ActionResult Edit(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+
             Lunch lunch = _context.Lunches.Find(id);
+
             if (lunch == null)
-            {
                 return HttpNotFound();
-            }
-            return View(lunch);
+
+            var lunchViewModel = new LunchViewModel
+            {
+                Host = lunch.Host,
+                MeetingTime = lunch.MeetingTime,
+                // SelectedRestaurantId = lunch.Restaurant.Id,
+                Restaurants = _context.Restaurants.ToList()
+                    .Select(r => new SelectListItem
+                    {
+                        Value = r.Id.ToString(),
+                        Text = r.Name
+                    })
+            };
+            return View(lunchViewModel);
         }
 
         // POST: Lunches/Edit/5
@@ -103,10 +118,16 @@ namespace DevLunch.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int Id, [Bind(Include = "Id,Host,MeetingTime")] Lunch lunch)
+        public ActionResult Edit(int Id, [Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
         {
+            var lunch = _context.Lunches.Find(Id);
+
             if (ModelState.IsValid)
             {
+                lunch.Host = lunchViewModel.Host;
+                lunch.MeetingTime = lunchViewModel.MeetingTime;
+                lunch.Restaurant = _context.Restaurants.Find(lunchViewModel.SelectedRestaurantId);
+
                 _context.Entry(lunch).State = EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Index");

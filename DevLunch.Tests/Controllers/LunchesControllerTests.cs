@@ -182,7 +182,7 @@ namespace DevLunch.Tests.Controllers
 
             // Assert
             result.ShouldNotBeNull();
-            result.Model.ShouldBeOfType<Lunch>();
+            result.Model.ShouldBeOfType<LunchViewModel>();
         }
 
         [Test]
@@ -233,7 +233,7 @@ namespace DevLunch.Tests.Controllers
             var editableRecordId = _context.Restaurants.First().Id;
             var recordEditGetResult = controller.Edit(editableRecordId) as ViewResult;
 
-            var recordToEdit = recordEditGetResult.Model as Lunch;
+            var recordToEdit = recordEditGetResult.Model as LunchViewModel;
             recordToEdit.Host = "Bob";
 
             // Act

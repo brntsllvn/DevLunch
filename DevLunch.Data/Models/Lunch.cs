@@ -8,10 +8,8 @@ namespace DevLunch.Data.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
         public string Host { get; set; }
 
-        [Required]
         [DataType(DataType.Date)]
         public DateTime? MeetingTime { get; set; }
 
