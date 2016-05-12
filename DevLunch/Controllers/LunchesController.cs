@@ -60,7 +60,7 @@ namespace DevLunch.Controllers
                         Text = r.Name
                     })
             };
-            
+            ViewBag.Title = "Create";
             return View(lunchViewModel);
         }
 
@@ -82,7 +82,7 @@ namespace DevLunch.Controllers
 
                 return RedirectToAction("Index");
             }
-
+            ViewBag.Title = "Create";
             return View("Create", lunchViewModel);
         }
 
@@ -114,6 +114,7 @@ namespace DevLunch.Controllers
                         Selected = r.Id == selectedRestaurantId
                     }).ToList()
             };
+            ViewBag.Title = "Edit";
             return View(lunchViewModel);
         }
 
@@ -139,6 +140,7 @@ namespace DevLunch.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.Title = "Edit";
             return View("Edit", lunchViewModel);
         }
 

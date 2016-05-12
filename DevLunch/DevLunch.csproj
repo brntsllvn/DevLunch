@@ -241,6 +241,7 @@
     <Content Include="Views\Lunches\Edit.cshtml" />
     <Content Include="Views\Lunches\Index.cshtml" />
     <Content Include="Views\Lunches\Create.cshtml" />
+    <Content Include="Views\Lunches\_CreateEditForm.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
