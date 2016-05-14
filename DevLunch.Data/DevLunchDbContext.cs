@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.Entity;
 using DevLunch.Data.Models;
@@ -19,5 +20,6 @@ namespace DevLunch.Data
 
         public DbSet<Restaurant> Restaurants { get; set; }
         public DbSet<Lunch> Lunches { get; set; }
+        public DbSet<LunchCandidate> LunchCandidates { get; set; }
     }
 }

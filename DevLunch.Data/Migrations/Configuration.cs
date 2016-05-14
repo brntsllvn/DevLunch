@@ -10,39 +10,27 @@ namespace DevLunch.Data.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(DevLunchDbContext context)
         {
-            context.Restaurants.AddOrUpdate(r => r.Name, new Restaurant { Name = "Lunch Box Lab" });
-            context.Restaurants.AddOrUpdate(r => r.Name, new Restaurant { Name = "Yard House" });
+            var Lunches = new List<Lunch>();
 
-            var Lunches = new List<Lunch>
+            for (int i = 0; i < 100; i++)
             {
                 new Lunch
                 {
-                     Host = "Brent",
-                     Restaurant = new Restaurant
-                     {
-                         Name = "Lunchbox Labs",
-                         Latitude = 55,
-                         Longitude = 99
-                     },
-                     MeetingTime = new DateTime(1999,12,31)
-                },
-                new Lunch
-                {
-                     Host = "Brent",
-                     Restaurant = new Restaurant
+                    Host = $"Person_{i}",
+                    Restaurant = new Restaurant
                     {
-                        Name = "Lunchbox Labs",
-                        Latitude = 55,
-                        Longitude = 99
+                        Name = $"Restaurant_{i}",
+                        Latitude = new Random().Next(0, 10),
+                        Longitude = new Random().Next(10, 50),
                     },
-                    MeetingTime = new DateTime(1999,12,31)
-                }
-            };
+                    MeetingTime = new DateTime(new Random().Next(1990, 2050), new Random().Next(1, 12), new Random().Next(1, 27))
+                };
+            }
 
             context.Lunches.AddRange(Lunches);
             context.SaveChanges();

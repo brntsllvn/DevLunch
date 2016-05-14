@@ -127,6 +127,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\LunchCandidateControllerTests.cs" />
     <Compile Include="Controllers\LunchesControllerTests.cs" />
     <Compile Include="Controllers\RestaurantControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

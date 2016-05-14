@@ -26,8 +26,10 @@ namespace DevLunch.Controllers
         // GET: Lunches
         public ActionResult Index()
         {
-            var lunches = _context.Lunches
+            var lunches = _context
+                .Lunches
                 .Include(lunch => lunch.Restaurant)
+                .OrderByDescending(lunch => lunch.MeetingTime)
                 .ToList();
 
             return View(lunches);

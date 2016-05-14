@@ -79,7 +79,7 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Index_ReturnsAllLunches()
+        public void Index_ReturnsAllLunchesInDescendingOrder()
         {
             // Arrange
             var Lunches = new List<Lunch>
@@ -104,7 +104,7 @@ namespace DevLunch.Tests.Controllers
                         Latitude = 55,
                         Longitude = 99
                     },
-                    MeetingTime = new DateTime(1999,12,31)
+                    MeetingTime = new DateTime(2005,12,31)
                 }
             };
 
@@ -120,8 +120,8 @@ namespace DevLunch.Tests.Controllers
             var data = result.Model as IEnumerable<Lunch>;
             data.ShouldNotBeNull();
             data.Count().ShouldBe(2);
-            data.First().Host.ShouldBe("Brent");
-            data.Last().Host.ShouldBe("Josh");
+            data.First().Host.ShouldBe("Josh");
+            data.Last().Host.ShouldBe("Brent");
         }
 
         [Test]
