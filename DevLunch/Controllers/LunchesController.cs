@@ -40,15 +40,14 @@ namespace DevLunch.Controllers
         public ActionResult Details(int? id)
         {
             if (id == null)
-            {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Lunch lunch = _context.Lunches.Find(id);
+
+            var lunch = _context.Lunches.Find(id);
+            
             if (lunch == null)
-            {
-                return HttpNotFound();
-            }
-            return View(lunch);
+                return new HttpNotFoundResult();
+
+            return View(_context.Lunches.Include(l => l.Restaurants).First(l => l.Id == id));
         }
 
         // GET: Lunches/Create
@@ -111,13 +110,15 @@ namespace DevLunch.Controllers
             if (id == null)
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var lunch = _context
-                .Lunches
-                .Include(l => l.Restaurants)
-                .First(l => l.Id == id);
+            var lunch = _context.Lunches.Find(id);
 
             if (lunch == null)
-                return HttpNotFound();
+                return new HttpNotFoundResult();
+
+            lunch = _context
+                    .Lunches
+                    .Include(l => l.Restaurants)
+                    .First(l => l.Id == id);
 
             var lunchViewModel = new LunchViewModel
             {
@@ -145,7 +146,6 @@ namespace DevLunch.Controllers
         }
 
         //POST: Lunches/Edit/5
-        // todo: checkboxes for associated restaurants are not checked by default
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, LunchViewModel lunchViewModel)
@@ -178,7 +178,7 @@ namespace DevLunch.Controllers
             Lunch lunch = _context.Lunches.Find(id);
             if (lunch == null)
             {
-                return HttpNotFound();
+                return new HttpNotFoundResult();
             }
             return View(lunch);
         }

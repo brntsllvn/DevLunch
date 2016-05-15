@@ -11,21 +11,19 @@
     <h4>Lunch</h4>
     <hr />
     <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Host)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.Host)</dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.Host)
-        </dd>
+        <dd>@Html.DisplayFor(model => model.Host)</dd>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.MeetingTime)
-        </dt>
+        <dt>@Html.DisplayNameFor(model => model.MeetingTime)</dt>
 
-        <dd>
-            @Html.DisplayFor(model => model.MeetingTime)
-        </dd>
+        <dd>@Html.DisplayFor(model => model.MeetingTime)</dd>
+
+        <dt>Restaurants</dt>
+        @foreach (var restaurant in Model.Restaurants)
+        {
+            <dd>@restaurant.Name</dd>
+        }
 
     </dl>
 </div>

@@ -51,6 +51,7 @@ namespace DevLunch.Tests.Controllers
             var data = result.Model as Lunch;
             data.ShouldNotBeNull();
             data.Id.ShouldBe(1);
+            data.Restaurants.Count.ShouldBe(1);
             data.Host.ShouldBe("Brent");
         }
 
@@ -69,7 +70,7 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Detail_ReturnsNullException_WhenRecordDoesNotExist()
+        public void Details_ReturnsHttpNotFound_WhenRecordDoesNotExist()
         {
             var controller = new LunchesController(_context);
 
