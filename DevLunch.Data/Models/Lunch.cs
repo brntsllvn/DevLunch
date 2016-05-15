@@ -19,7 +19,7 @@ namespace DevLunch.Data.Models
         [DataType(DataType.Date)]
         public DateTime? MeetingTime { get; set; }
 
-        public List<Restaurant> Restaurants { get; set; }
+        public virtual ICollection<Restaurant> Restaurants { get; set; }
     }
 }
  
