@@ -22,7 +22,11 @@
         <dt>Restaurants</dt>
         @foreach (var restaurant in Model.Restaurants)
         {
-            <dd>@restaurant.Name</dd>
+            <dd>
+                @Html.ActionLink("Upvote","Create","Vote", htmlAttributes: new { @class = "btn btn-success btn-sm" })
+                @Html.ActionLink("Downvote", "Create", "Vote", htmlAttributes: new { @class = "btn btn-danger btn-sm" })
+                @restaurant.Name
+            </dd>
         }
 
     </dl>
