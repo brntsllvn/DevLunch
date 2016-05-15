@@ -72,8 +72,7 @@ namespace DevLunch.Controllers
 
             lunchViewModel.Restaurants = checkBoxListItems;
 
-            ViewBag.Title = "Create";
-            return View(lunchViewModel);
+            return View("Create", lunchViewModel);
         }
 
         // POST: Lunches/Create
@@ -109,60 +108,65 @@ namespace DevLunch.Controllers
         // GET: Lunches/Edit/5
         public ActionResult Edit(int? id)
         {
-            //if (id == null)
-            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            if (id == null)
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            //var lunch = _context
-            //    .Lunches
-            //    .Include(l => l.Restaurant)
-            //    .First(l => l.Id == id);
+            var lunch = _context
+                .Lunches
+                .Include(l => l.Restaurants)
+                .First(l => l.Id == id);
 
-            //if (lunch == null)
-            //    return HttpNotFound();
+            if (lunch == null)
+                return HttpNotFound();
 
-            //var selectedRestaurantId = lunch.Restaurant.Id;
+            var lunchViewModel = new LunchViewModel
+            {
+                Host = lunch.Host,
+                MeetingTime = lunch.MeetingTime,
+            };
 
-            //var lunchViewModel = new LunchViewModel
-            //{
-            //    Host = lunch.Host,
-            //    MeetingTime = lunch.MeetingTime,
-            //    Restaurants = _context.Restaurants
-            //        .Select(r => new SelectListItem
-            //        {
-            //            Value = r.Id.ToString(),
-            //            Text = r.Name,
-            //            Selected = r.Id == selectedRestaurantId
-            //        }).ToList()
-            //};
-            ViewBag.Title = "Edit";
-            return View(new LunchViewModel());
+            var lunchRestaurants = lunch.Restaurants;
+
+            var allRestaurants = _context.Restaurants.ToList();
+            var checkBoxListItems = new List<CheckBoxListItem>();
+
+            foreach (var restaurant in allRestaurants)
+            {
+                checkBoxListItems.Add(new CheckBoxListItem
+                {
+                    ID = restaurant.Id,
+                    Display = restaurant.Name,
+                    IsChecked = lunchRestaurants.Where(r => r.Id == restaurant.Id).Any()
+                });
+            }
+
+            lunchViewModel.Restaurants = checkBoxListItems;
+            return View("Edit", lunchViewModel);
         }
 
-        // POST: Lunches/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public ActionResult Edit(int id, [Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
-        //{
-        //    var lunch = _context
-        //        .Lunches
-        //        .Include(l => l.Restaurant)
-        //        .First(l => l.Id == id);
+        //POST: Lunches/Edit/5
+        // todo: checkboxes for associated restaurants are not checked by default
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, LunchViewModel lunchViewModel)
+        {
+            var lunch = _context
+                .Lunches
+                .Include(l => l.Restaurants)
+                .First(l => l.Id == id);
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        lunch.Host = lunchViewModel.Host;
-        //        lunch.MeetingTime = lunchViewModel.MeetingTime;
-        //        lunch.Restaurant = _context.Restaurants.Find(lunchViewModel.SelectedRestaurantId);
+            if (ModelState.IsValid)
+            {
+                lunch.Host = lunchViewModel.Host;
+                lunch.MeetingTime = lunchViewModel.MeetingTime;
 
-        //        _context.Entry(lunch).State = EntityState.Modified;
-        //        _context.SaveChanges();
-        //        return RedirectToAction("Index");
-        //    }
-        //    ViewBag.Title = "Edit";
-        //    return View("Edit", lunchViewModel);
-        //}
+                _context.Entry(lunch).State = EntityState.Modified;
+                _context.SaveChanges();
+                return RedirectToAction("Index");
+            }
+
+            return View("Edit", lunchViewModel);
+        }
 
         // GET: Lunches/Delete/5
         public ActionResult Delete(int? id)

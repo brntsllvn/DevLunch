@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace DevLunch.ViewModels
+﻿namespace DevLunch.ViewModels
 {
     public class CheckBoxListItem
     {
