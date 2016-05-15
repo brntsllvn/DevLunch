@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace DevLunch.Data.Models
 {
@@ -19,5 +20,7 @@ namespace DevLunch.Data.Models
         [Required]
         [Range(-180, 180)]
         public decimal Longitude { get; set; }
+
+        public virtual ICollection<Lunch> Lunches { get; set; }
     }
 }
