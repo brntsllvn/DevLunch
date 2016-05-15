@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
 using DevLunch.ViewModels;
+using System.Collections.Generic;
 
 namespace DevLunch.Controllers
 {
@@ -28,7 +29,7 @@ namespace DevLunch.Controllers
         {
             var lunches = _context
                 .Lunches
-                .Include(lunch => lunch.Restaurant)
+                .Include(lunch => lunch.Restaurants)
                 .OrderByDescending(lunch => lunch.MeetingTime)
                 .ToList();
 
@@ -53,15 +54,24 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-            var lunchViewModel = new LunchViewModel
+            var lunchViewModel = new LunchViewModel();
+
+            var allRestaurants = _context.Restaurants.ToList();
+
+            var checkBoxListItems = new List<CheckBoxListItem>();
+
+            foreach (var restaurant in allRestaurants)
             {
-                Restaurants = _context.Restaurants.ToList()
-                    .Select(r => new SelectListItem
-                    {
-                        Value = r.Id.ToString(),
-                        Text = r.Name
-                    })
-            };
+                checkBoxListItems.Add(new CheckBoxListItem()
+                {
+                    ID = restaurant.Id,
+                    Display = restaurant.Name,
+                    IsChecked = false
+                });
+            }
+
+            lunchViewModel.Restaurants = checkBoxListItems;
+
             ViewBag.Title = "Create";
             return View(lunchViewModel);
         }
@@ -69,82 +79,90 @@ namespace DevLunch.Controllers
         // POST: Lunches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
+        public ActionResult Create(LunchViewModel lunchViewModel)
         {
-            var lunch = new Lunch();
+            var selectedRestaurants = lunchViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
 
             if (ModelState.IsValid)
             {
-                lunch.Host = lunchViewModel.Host;
-                lunch.MeetingTime = lunchViewModel.MeetingTime;
-                lunch.Restaurant = _context.Restaurants.Find(lunchViewModel.SelectedRestaurantId);
+                var lunch = new Lunch()
+                {
+                    Host = lunchViewModel.Host,
+                    MeetingTime = lunchViewModel.MeetingTime
+                };
+
+                foreach (var restaurantID in selectedRestaurants)
+                {
+                    var restaurant = _context.Restaurants.Find(restaurantID);
+                    lunch.Restaurants.Add(restaurant);
+                }
 
                 _context.Lunches.Add(lunch);
                 _context.SaveChanges();
 
                 return RedirectToAction("Index");
             }
-            ViewBag.Title = "Create";
+
             return View("Create", lunchViewModel);
         }
 
         // GET: Lunches/Edit/5
         public ActionResult Edit(int? id)
         {
-            if (id == null)
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //if (id == null)
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
-            var lunch = _context
-                .Lunches
-                .Include(l => l.Restaurant)
-                .First(l => l.Id == id);
+            //var lunch = _context
+            //    .Lunches
+            //    .Include(l => l.Restaurant)
+            //    .First(l => l.Id == id);
 
-            if (lunch == null)
-                return HttpNotFound();
+            //if (lunch == null)
+            //    return HttpNotFound();
 
-            var selectedRestaurantId = lunch.Restaurant.Id;
+            //var selectedRestaurantId = lunch.Restaurant.Id;
 
-            var lunchViewModel = new LunchViewModel
-            {
-                Host = lunch.Host,
-                MeetingTime = lunch.MeetingTime,
-                Restaurants = _context.Restaurants
-                    .Select(r => new SelectListItem
-                    {
-                        Value = r.Id.ToString(),
-                        Text = r.Name,
-                        Selected = r.Id == selectedRestaurantId
-                    }).ToList()
-            };
+            //var lunchViewModel = new LunchViewModel
+            //{
+            //    Host = lunch.Host,
+            //    MeetingTime = lunch.MeetingTime,
+            //    Restaurants = _context.Restaurants
+            //        .Select(r => new SelectListItem
+            //        {
+            //            Value = r.Id.ToString(),
+            //            Text = r.Name,
+            //            Selected = r.Id == selectedRestaurantId
+            //        }).ToList()
+            //};
             ViewBag.Title = "Edit";
-            return View(lunchViewModel);
+            return View(new LunchViewModel());
         }
 
         // POST: Lunches/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, [Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
-        {
-            var lunch = _context
-                .Lunches
-                .Include(l => l.Restaurant)
-                .First(l => l.Id == id);
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public ActionResult Edit(int id, [Bind(Include = "Id, Host, MeetingTime, SelectedRestaurantId")] LunchViewModel lunchViewModel)
+        //{
+        //    var lunch = _context
+        //        .Lunches
+        //        .Include(l => l.Restaurant)
+        //        .First(l => l.Id == id);
 
-            if (ModelState.IsValid)
-            {
-                lunch.Host = lunchViewModel.Host;
-                lunch.MeetingTime = lunchViewModel.MeetingTime;
-                lunch.Restaurant = _context.Restaurants.Find(lunchViewModel.SelectedRestaurantId);
+        //    if (ModelState.IsValid)
+        //    {
+        //        lunch.Host = lunchViewModel.Host;
+        //        lunch.MeetingTime = lunchViewModel.MeetingTime;
+        //        lunch.Restaurant = _context.Restaurants.Find(lunchViewModel.SelectedRestaurantId);
 
-                _context.Entry(lunch).State = EntityState.Modified;
-                _context.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            ViewBag.Title = "Edit";
-            return View("Edit", lunchViewModel);
-        }
+        //        _context.Entry(lunch).State = EntityState.Modified;
+        //        _context.SaveChanges();
+        //        return RedirectToAction("Index");
+        //    }
+        //    ViewBag.Title = "Edit";
+        //    return View("Edit", lunchViewModel);
+        //}
 
         // GET: Lunches/Delete/5
         public ActionResult Delete(int? id)

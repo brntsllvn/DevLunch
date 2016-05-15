@@ -140,13 +140,13 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\HomeController.cs" />
-    <Compile Include="Controllers\LunchCandidateController.cs" />
     <Compile Include="Controllers\LunchesController.cs" />
     <Compile Include="Controllers\RestaurantController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\CheckBoxListItem.cs" />
     <Compile Include="ViewModels\LunchViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -243,7 +243,7 @@
     <Content Include="Views\Lunches\Index.cshtml" />
     <Content Include="Views\Lunches\Create.cshtml" />
     <Content Include="Views\Lunches\_CreateEditForm.cshtml" />
-    <Content Include="Views\LunchCandidate\Create.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\CheckBoxListItem.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
