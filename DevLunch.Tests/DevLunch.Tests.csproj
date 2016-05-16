@@ -129,6 +129,7 @@
   <ItemGroup>
     <Compile Include="Controllers\LunchesControllerTests.cs" />
     <Compile Include="Controllers\RestaurantControllerTests.cs" />
+    <Compile Include="Controllers\VotesControllerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

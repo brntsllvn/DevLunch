@@ -57,6 +57,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Lunch.cs" />
     <Compile Include="Models\Restaurant.cs" />
+    <Compile Include="Models\Vote.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
