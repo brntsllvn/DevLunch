@@ -6,6 +6,8 @@ using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Web.Mvc;
 
 namespace DevLunch.Tests.Controllers
 {
@@ -21,7 +23,7 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Create_Post_CreatesNewRecordAndSavesToDb()
+        public void Upvote_Post_CreatesNewRecordAndSavesToDb()
         {
             // Arrange
             var controller = new VotesController(_context);
@@ -42,12 +44,78 @@ namespace DevLunch.Tests.Controllers
             _context.SaveChanges();
 
             // Act
-            var result = controller.Create(lunch, lunch.Restaurants.First(), 1);
+            var result = controller.Upvote(lunch.Id, lunch.Restaurants.First().Id);
 
             // Assert
             var vote = _context.Votes.First();
             vote.ShouldNotBeNull();
             vote.Value.ShouldBe(1);
+        }
+
+        [Test]
+        public void Downvote_Post_CreatesNewRecordAndSavesToDb()
+        {
+            // Arrange
+            var controller = new VotesController(_context);
+
+            var lunch = new Lunch()
+            {
+                Host = "Brent",
+                MeetingTime = new DateTime(1985, 6, 6),
+                Restaurants = new List<Restaurant>()
+                {
+                    new Restaurant { Name = "Linda's", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "The Pine Box", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "Sizzler", Latitude = 55, Longitude = 60 }
+                }
+            };
+
+            _context.Lunches.Add(lunch);
+            _context.SaveChanges();
+
+            // Act
+            var result = controller.Downvote(lunch.Id, lunch.Restaurants.First().Id);
+
+            // Assert
+            var vote = _context.Votes.First();
+            vote.ShouldNotBeNull();
+            vote.Value.ShouldBe(-2);
+        }
+
+        [Test]
+        public void Vote_Throws_WhenLunchCannotBeFound()
+        {
+            // Arrange
+            var controller = new VotesController(_context);
+            var restaurant = new Restaurant {Name = "Brent's"};
+            _context.Restaurants.Add(restaurant);
+            _context.SaveChanges();
+
+            // Act
+            var result = controller.Downvote(999, restaurant.Id);
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            var typedResult = (HttpStatusCodeResult) result;
+            typedResult.StatusCode.ShouldBe((int)HttpStatusCode.NotFound);
+        }
+
+        [Test]
+        public void Vote_Throws_WhenRestaurantCannotBeFound()
+        {
+            // Arrange
+            var controller = new VotesController(_context);
+            var lunch = new Lunch {Host = "Josh"};
+            _context.Lunches.Add(lunch);
+            _context.SaveChanges();
+
+            // Act
+            var result = controller.Downvote(lunch.Id, 999);
+
+            // Assert
+            result.ShouldBeOfType<HttpStatusCodeResult>();
+            var typedResult = (HttpStatusCodeResult) result;
+            typedResult.StatusCode.ShouldBe((int)HttpStatusCode.NotFound);
         }
 
         //[Test]
