@@ -1,4 +1,6 @@
-﻿@model DevLunch.Data.Models.Lunch
+﻿@using System.Threading
+@using DevLunch.Data.Models
+@model DevLunch.Data.Models.Lunch
 
 @{
     ViewBag.Title = "Details";
@@ -23,8 +25,15 @@
         @foreach (var restaurant in Model.Restaurants)
         {
             <dd>
-                @Html.ActionLink("Upvote","Create","Vote", htmlAttributes: new { @class = "btn btn-success btn-sm" })
-                @Html.ActionLink("Downvote", "Create", "Vote", htmlAttributes: new { @class = "btn btn-danger btn-sm" })
+                <div id=@($"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}")>Replace with count</div>
+                @Ajax.ActionLink("Upvote", "Upvote", new {restaurantId = restaurant.Id, lunchId = Model.Id}, 
+                    new AjaxOptions {HttpMethod = "POST", UpdateTargetId = $"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}", InsertionMode = InsertionMode.Replace}, 
+                    new {@class = "btn btn-success btn-sm"})
+
+                @Ajax.ActionLink("Downvote", "Downvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
+                    new AjaxOptions {HttpMethod = "POST", UpdateTargetId = $"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}", InsertionMode = InsertionMode.Replace},
+                    new {@class = "btn btn-danger btn-sm"})
+                
                 @restaurant.Name
             </dd>
         }
