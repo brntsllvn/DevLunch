@@ -3,14 +3,31 @@ namespace DevLunch.Data.Migrations
     using System;
     using System.Data.Entity.Migrations;
     
-    public partial class _03 : DbMigration
+    public partial class init : DbMigration
     {
         public override void Up()
         {
-            DropForeignKey("dbo.Lunches", "DestinationRestaurant_Id", "dbo.Restaurants");
-            DropIndex("dbo.Lunches", new[] { "Restaurant_Id" });
-            DropColumn("dbo.Lunches", "Restaurant_Id");
-
+            CreateTable(
+                "dbo.Lunches",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Host = c.String(),
+                        MeetingTime = c.DateTime(),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.Restaurants",
+                c => new
+                    {
+                        Id = c.Int(nullable: false, identity: true),
+                        Name = c.String(nullable: false, maxLength: 100),
+                        Latitude = c.Decimal(nullable: false, precision: 18, scale: 2),
+                        Longitude = c.Decimal(nullable: false, precision: 18, scale: 2),
+                    })
+                .PrimaryKey(t => t.Id);
+            
             CreateTable(
                 "dbo.Votes",
                 c => new
@@ -39,12 +56,10 @@ namespace DevLunch.Data.Migrations
                 .Index(t => t.Restaurant_Id)
                 .Index(t => t.Lunch_Id);
             
-           
         }
         
         public override void Down()
         {
-            AddColumn("dbo.Lunches", "Restaurant_Id", c => c.Int());
             DropForeignKey("dbo.Votes", "Restaurant_Id", "dbo.Restaurants");
             DropForeignKey("dbo.Votes", "Lunch_Id", "dbo.Lunches");
             DropForeignKey("dbo.RestaurantLunches", "Lunch_Id", "dbo.Lunches");
@@ -55,8 +70,8 @@ namespace DevLunch.Data.Migrations
             DropIndex("dbo.Votes", new[] { "Lunch_Id" });
             DropTable("dbo.RestaurantLunches");
             DropTable("dbo.Votes");
-            CreateIndex("dbo.Lunches", "Restaurant_Id");
-            AddForeignKey("dbo.Lunches", "Restaurant_Id", "dbo.Restaurants", "Id");
+            DropTable("dbo.Restaurants");
+            DropTable("dbo.Lunches");
         }
     }
 }

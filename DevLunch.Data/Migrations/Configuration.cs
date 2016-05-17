@@ -1,56 +1,43 @@
-using System;
 using System.Collections.Generic;
 using DevLunch.Data.Models;
+using FizzWare.NBuilder;
 
 namespace DevLunch.Data.Migrations
 {
+    using System;
     using System.Data.Entity.Migrations;
 
-    internal sealed class Configuration : DbMigrationsConfiguration<DevLunchDbContext>
+    internal sealed class Configuration : DbMigrationsConfiguration<DevLunch.Data.DevLunchDbContext>
     {
         public Configuration()
         {
             AutomaticMigrationsEnabled = true;
         }
 
-        // todo: not working...
-        protected override void Seed(DevLunchDbContext context)
+        protected override void Seed(DevLunch.Data.DevLunchDbContext context)
         {
-            var Lunches = new List<Lunch>();
-            var restaurants = new List<Restaurant>
-            {
-                new Restaurant
-                {
-                    Name = string.Format("Restaurant_{0}", new Random().Next(0, 1000)),
-                    Latitude = new Random().Next(0, 10),
-                    Longitude = new Random().Next(10, 50)
-                },
-                new Restaurant
-                {
-                    Name = string.Format("Restaurant_{0}", new Random().Next(0, 1000)),
-                    Latitude = new Random().Next(0, 10),
-                    Longitude = new Random().Next(10, 50)
-                },
-                new Restaurant
-                {
-                    Name = string.Format("Restaurant_{0}", new Random().Next(0, 1000)),
-                    Latitude = new Random().Next(0, 10),
-                    Longitude = new Random().Next(10, 50)
-                }
-            };
+            var restaurants = Builder<Restaurant>.CreateListOfSize(30)
+                .All()
+                .With(r => r.Name = Faker.Company.Name())
+                .Build();
 
-            for (int i = 0; i < 100; i++)
-            {
-                new Lunch
-                {
-                    Host = $"Person_{i}",
-                    Restaurants = restaurants,
-                    MeetingTime = new DateTime(new Random().Next(1990, 2050), new Random().Next(1, 12), new Random().Next(1, 27))
-                };
-            }
+            var daysGenerator = new RandomGenerator();
 
-            context.Lunches.AddRange(Lunches);
+            var lunches = Builder<Lunch>.CreateListOfSize(20)
+                .All()
+                .With(r => r.Host = Faker.Name.FullName())
+                .With(r => r.MeetingTime = DateTime.Now.AddDays(-daysGenerator.Next(1, 100)))
+                .With(r => r.Restaurants = new List<Restaurant>
+                {
+                    Pick<Restaurant>.RandomItemFrom(restaurants),
+                    Pick<Restaurant>.RandomItemFrom(restaurants),
+                    Pick<Restaurant>.RandomItemFrom(restaurants),
+                })
+                .Build();
+
+            context.Lunches.AddRange(lunches);
             context.SaveChanges();
+
         }
     }
 }
