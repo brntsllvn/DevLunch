@@ -147,6 +147,7 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\CheckBoxListItem.cs" />
+    <Compile Include="ViewModels\LunchDetailsViewModel.cs" />
     <Compile Include="ViewModels\LunchViewModel.cs" />
   </ItemGroup>
   <ItemGroup>

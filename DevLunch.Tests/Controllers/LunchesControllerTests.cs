@@ -24,7 +24,7 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
-        public void Details_ReturnsOneLunch()
+        public void Details_ReturnsOneLunchWithRestaurantsWithVotes()
         {
             // Arrange
             _context.Lunches.Add(new Lunch
@@ -41,7 +41,20 @@ namespace DevLunch.Tests.Controllers
                 },
                 MeetingTime = new DateTime(1999, 12, 31)
             });
+
             _context.SaveChanges();
+
+            _context.Votes.AddRange(
+                new List<Vote>
+                {
+                    new Vote { Lunch = _context.Lunches.First(), Restaurant = _context.Restaurants.First(), Value = 2},
+                    new Vote { Lunch = _context.Lunches.First(), Restaurant = _context.Restaurants.First(), Value = 3},
+                    new Vote { Lunch = _context.Lunches.First(), Restaurant = _context.Restaurants.First(), Value = -8}
+                }
+                );
+
+            _context.SaveChanges();
+
             var controller = new LunchesController(_context);
 
             // Act
@@ -49,10 +62,12 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Details(id) as ViewResult;
 
             // Assert
-            var data = result.Model as Lunch;
+            var data = result.Model as LunchDetailsViewModel;
             data.ShouldNotBeNull();
             data.Id.ShouldBe(1);
             data.Restaurants.Count.ShouldBe(1);
+            data.Votes.Count.ShouldBe(3);
+            data.Votes.Sum(v => v.Value).ShouldBe(-3);
             data.Host.ShouldBe("Brent");
         }
 
@@ -446,5 +461,6 @@ namespace DevLunch.Tests.Controllers
             var typedResult = (HttpStatusCodeResult)result;
             typedResult.StatusCode.ShouldBe((int)HttpStatusCode.NotFound);
         }
+
     }
 }

@@ -47,7 +47,20 @@ namespace DevLunch.Controllers
             if (lunch == null)
                 return new HttpNotFoundResult();
 
-            return View(_context.Lunches.Include(l => l.Restaurants).First(l => l.Id == id));
+            lunch = _context.Lunches.Include(l => l.Restaurants).First(l => l.Id == id);
+
+            var votes = _context.Votes.Where(v => v.Lunch.Id == id).ToList();
+
+            var lunchDetailsViewModel = new LunchDetailsViewModel
+            {
+                Id = lunch.Id,
+                Host = lunch.Host,
+                MeetingTime = lunch.MeetingTime,
+                Restaurants = lunch.Restaurants,
+                Votes = votes
+            };
+
+            return View(lunchDetailsViewModel);
         }
 
         // GET: Lunches/Create

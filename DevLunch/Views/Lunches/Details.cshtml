@@ -1,6 +1,4 @@
-﻿@using System.Threading
-@using DevLunch.Data.Models
-@model DevLunch.Data.Models.Lunch
+﻿@model DevLunch.ViewModels.LunchDetailsViewModel
 
 @{
     ViewBag.Title = "Details";
@@ -25,7 +23,8 @@
         @foreach (var restaurant in Model.Restaurants)
         {
             <dd>
-                <div id=@($"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}")>Replace with count</div>
+                <span id=@($"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}")>@Model.Votes.Where(v => v.Restaurant.Id == restaurant.Id).Sum(v => v.Value)</span>
+                
                 @Ajax.ActionLink("Upvote", "Upvote", new {restaurantId = restaurant.Id, lunchId = Model.Id}, 
                     new AjaxOptions {HttpMethod = "POST", UpdateTargetId = $"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}", InsertionMode = InsertionMode.Replace}, 
                     new {@class = "btn btn-success btn-sm"})
