@@ -14,6 +14,14 @@ namespace DevLunch.Data.Models
 
         public string UserName { get; set; }
 
+        public VoteType VoteType { get; set; }
+
         public int Value { get; set; }
+    }
+
+    public enum VoteType
+    {
+        Upvote = 1,
+        Downvote = 2
     }
 }

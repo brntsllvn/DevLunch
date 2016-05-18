@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -213,7 +214,7 @@ namespace DevLunch.Controllers
         {
             // todo: only valid PPA user can vote
             // todo: only one upvote per restaurant per user
-            return CreateVote(lunchId, restaurantId, 1);
+            return CreateVote(lunchId, restaurantId, VoteType.Upvote);
         }
 
         [HttpPost]
@@ -221,10 +222,10 @@ namespace DevLunch.Controllers
         {
             // todo: only valid PPA user can vote
             // todo: only one downvote per user, period
-            return CreateVote(lunchId, restaurantId, -2);
+            return CreateVote(lunchId, restaurantId, VoteType.Downvote);
         }
 
-        private ActionResult CreateVote(int lunchId, int restaurantId, int value)
+        private ActionResult CreateVote(int lunchId, int restaurantId, VoteType type)
         {
             var lunch = _context.Lunches.Find(lunchId);
             if (lunch == null)
@@ -234,8 +235,7 @@ namespace DevLunch.Controllers
             if (restaurant == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, $"Specified restaurant '{restaurantId}' does not exist");
 
-            if(User == null ||
-                User.Identity == null)
+            if(User?.Identity == null)
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
 
             var userName = User.Identity.Name;
@@ -244,7 +244,7 @@ namespace DevLunch.Controllers
                 .Where(v => v.Lunch.Id == lunchId)
                 .FirstOrDefault(v => v.UserName == userName);
 
-
+            var voteValue = GetVoteValue(type);
             if (existingVote == null)
             {
                 var newVote = new Vote
@@ -252,14 +252,16 @@ namespace DevLunch.Controllers
                     Lunch = lunch,
                     Restaurant = restaurant,
                     UserName = userName,
-                    Value = value
+                    Value = voteValue,
+                    VoteType = type
                 };
                 _context.Votes.Add(newVote);
 
             }
             else
             {
-                existingVote.Value = value;
+                existingVote.Value = voteValue;
+                existingVote.VoteType = type;
             }
 
             _context.SaveChanges();
@@ -269,6 +271,19 @@ namespace DevLunch.Controllers
                 .Sum(v => v.Value);
 
             return Json(totalVotevalue);
+        }
+
+        private static int GetVoteValue(VoteType type)
+        {
+            switch (type)
+            {
+                case VoteType.Upvote:
+                    return 1;
+                case VoteType.Downvote:
+                    return -2;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(type));
+            }
         }
     }
 }
