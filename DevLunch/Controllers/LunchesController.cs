@@ -163,6 +163,8 @@ namespace DevLunch.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(int id, LunchCreateEditViewModel lunchCredteEditViewModel)
         {
+            var selectedRestaurants = lunchCredteEditViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
+
             var lunch = _context
                 .Lunches
                 .Include(l => l.Restaurants)
@@ -172,6 +174,12 @@ namespace DevLunch.Controllers
             {
                 lunch.Host = lunchCredteEditViewModel.Host;
                 lunch.MeetingTime = lunchCredteEditViewModel.MeetingTime;
+
+                foreach (var restaurantID in selectedRestaurants)
+                {
+                    var restaurant = _context.Restaurants.Find(restaurantID);
+                    lunch.Restaurants.Add(restaurant);
+                }
 
                 _context.Entry(lunch).State = EntityState.Modified;
                 _context.SaveChanges();
