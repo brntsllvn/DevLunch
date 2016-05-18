@@ -5,7 +5,6 @@ using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
 using DevLunch.ViewModels;
-using System.Collections.Generic;
 
 namespace DevLunch.Controllers
 {
@@ -14,15 +13,12 @@ namespace DevLunch.Controllers
         private readonly DevLunchDbContext _context;
 
         public LunchesController() : this(new DevLunchDbContext())
-        {
-
-        }
+        {}
 
         public LunchesController(DevLunchDbContext context)
         {
             _context = context;
         }
-
 
         // GET: Lunches
         public ActionResult Index()
@@ -66,26 +62,17 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-
+            // todo: validate only signed-in PPA user can create a lunch
             var lunchCreateEditViewModel = new LunchCreateEditViewModel();
 
             var allRestaurants = _context.Restaurants.ToList();
 
-            var checkBoxListItems = new List<CheckBoxListItem>();
-
-            foreach (var restaurant in allRestaurants)
+            var checkBoxListItems = allRestaurants.Select(restaurant => new CheckBoxListItem()
             {
-                checkBoxListItems.Add(new CheckBoxListItem()
-                {
-                    ID = restaurant.Id,
-                    Display = restaurant.Name,
-                    IsChecked = false
-                });
-            }
-
+                ID = restaurant.Id, Display = restaurant.Name, IsChecked = false
+            }).ToList();
 
             lunchCreateEditViewModel.Restaurants = checkBoxListItems;
-
    
             return View("Create", lunchCreateEditViewModel);
         }
@@ -108,9 +95,9 @@ namespace DevLunch.Controllers
                     MeetingTime = lunchCreateEditViewModel.MeetingTime
                 };
 
-                foreach (var restaurantID in selectedRestaurants)
+                foreach (var restaurantId in selectedRestaurants)
                 {
-                    var restaurant = _context.Restaurants.Find(restaurantID);
+                    var restaurant = _context.Restaurants.Find(restaurantId);
                     lunch.Restaurants.Add(restaurant);
                 }
 
@@ -150,17 +137,10 @@ namespace DevLunch.Controllers
             var lunchRestaurants = lunch.Restaurants;
 
             var allRestaurants = _context.Restaurants.ToList();
-            var checkBoxListItems = new List<CheckBoxListItem>();
-
-            foreach (var restaurant in allRestaurants)
+            var checkBoxListItems = allRestaurants.Select(restaurant => new CheckBoxListItem
             {
-                checkBoxListItems.Add(new CheckBoxListItem
-                {
-                    ID = restaurant.Id,
-                    Display = restaurant.Name,
-                    IsChecked = lunchRestaurants.Where(r => r.Id == restaurant.Id).Any()
-                });
-            }
+                ID = restaurant.Id, Display = restaurant.Name, IsChecked = lunchRestaurants.Any(r => r.Id == restaurant.Id)
+            }).ToList();
 
 
             lunchCreateEditViewModel.Restaurants = checkBoxListItems;
@@ -173,6 +153,7 @@ namespace DevLunch.Controllers
 
         public ActionResult Edit(int id, LunchCreateEditViewModel lunchCredteEditViewModel)
         {
+            // todo: validate lunch-creator can edit a lunch
             var selectedRestaurants = lunchCredteEditViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
 
             var lunch = _context
@@ -186,9 +167,9 @@ namespace DevLunch.Controllers
                 lunch.Host = lunchCredteEditViewModel.Host;
                 lunch.MeetingTime = lunchCredteEditViewModel.MeetingTime;
 
-                foreach (var restaurantID in selectedRestaurants)
+                foreach (var restaurantId in selectedRestaurants)
                 {
-                    var restaurant = _context.Restaurants.Find(restaurantID);
+                    var restaurant = _context.Restaurants.Find(restaurantId);
                     lunch.Restaurants.Add(restaurant);
                 }
 
@@ -230,15 +211,17 @@ namespace DevLunch.Controllers
         [HttpPost]
         public ActionResult Upvote(int lunchId, int restaurantId)
         {
+            // todo: only valid PPA user can vote
+            // todo: only one upvote per restaurant per user
             return CreateVote(lunchId, restaurantId, 1);
-
         }
 
         [HttpPost]
         public ActionResult Downvote(int lunchId, int restaurantId)
         {
+            // todo: only valid PPA user can vote
+            // todo: only one downvote per user, period
             return CreateVote(lunchId, restaurantId, -2);
-
         }
 
         private ActionResult CreateVote(int lunchId, int restaurantId, int value)
