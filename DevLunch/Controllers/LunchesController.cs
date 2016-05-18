@@ -66,6 +66,7 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
+
             var lunchCreateEditViewModel = new LunchCreateEditViewModel();
 
             var allRestaurants = _context.Restaurants.ToList();
@@ -82,22 +83,27 @@ namespace DevLunch.Controllers
                 });
             }
 
+
             lunchCreateEditViewModel.Restaurants = checkBoxListItems;
 
+   
             return View("Create", lunchCreateEditViewModel);
         }
 
         // POST: Lunches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public ActionResult Create(LunchCreateEditViewModel lunchCreateEditViewModel)
         {
+  
             var selectedRestaurants = lunchCreateEditViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
 
             if (ModelState.IsValid)
             {
                 var lunch = new Lunch()
                 {
+    
                     Host = lunchCreateEditViewModel.Host,
                     MeetingTime = lunchCreateEditViewModel.MeetingTime
                 };
@@ -113,6 +119,7 @@ namespace DevLunch.Controllers
 
                 return RedirectToAction("Index");
             }
+
 
             return View("Create", lunchCreateEditViewModel);
         }
@@ -133,6 +140,7 @@ namespace DevLunch.Controllers
                     .Include(l => l.Restaurants)
                     .First(l => l.Id == id);
 
+      
             var lunchCreateEditViewModel = new LunchCreateEditViewModel
             {
                 Host = lunch.Host,
@@ -154,6 +162,7 @@ namespace DevLunch.Controllers
                 });
             }
 
+
             lunchCreateEditViewModel.Restaurants = checkBoxListItems;
             return View("Edit", lunchCreateEditViewModel);
         }
@@ -161,6 +170,7 @@ namespace DevLunch.Controllers
         //POST: Lunches/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+
         public ActionResult Edit(int id, LunchCreateEditViewModel lunchCredteEditViewModel)
         {
             var selectedRestaurants = lunchCredteEditViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
@@ -172,6 +182,7 @@ namespace DevLunch.Controllers
 
             if (ModelState.IsValid)
             {
+ 
                 lunch.Host = lunchCredteEditViewModel.Host;
                 lunch.MeetingTime = lunchCredteEditViewModel.MeetingTime;
 
@@ -185,6 +196,7 @@ namespace DevLunch.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
+
 
             return View("Edit", lunchCredteEditViewModel);
         }
