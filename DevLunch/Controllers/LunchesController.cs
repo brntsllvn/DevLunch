@@ -234,14 +234,34 @@ namespace DevLunch.Controllers
             if (restaurant == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, $"Specified restaurant '{restaurantId}' does not exist");
 
-            var vote = new Vote
-            {
-                Lunch = lunch,
-                Restaurant = restaurant,
-                Value = value
-            };
+            if(User == null ||
+                User.Identity == null)
+                return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
 
-            _context.Votes.Add(vote);
+            var userName = User.Identity.Name;
+            var existingVote = _context.Votes
+                .Where(v => v.Restaurant.Id == restaurantId)
+                .Where(v => v.Lunch.Id == lunchId)
+                .FirstOrDefault(v => v.UserName == userName);
+
+
+            if (existingVote == null)
+            {
+                var newVote = new Vote
+                {
+                    Lunch = lunch,
+                    Restaurant = restaurant,
+                    UserName = userName,
+                    Value = value
+                };
+                _context.Votes.Add(newVote);
+
+            }
+            else
+            {
+                existingVote.Value = value;
+            }
+
             _context.SaveChanges();
 
             var totalVotevalue = _context.Votes

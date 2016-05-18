@@ -7,6 +7,7 @@ using DevLunch.Data;
 using DevLunch.Data.Models;
 using NUnit.Framework;
 using DevLunch.Controllers;
+using DevLunch.Tests.Helpers;
 using DevLunch.ViewModels;
 using Shouldly;
 
@@ -400,6 +401,7 @@ namespace DevLunch.Tests.Controllers
         {
             // Arrange
             var controller = new LunchesController(_context);
+            controller.WithAuthenticatedUser("Brent", "ImBrent");
 
             var lunch = new Lunch()
             {
@@ -426,10 +428,105 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
+        public void Upvote_PostWithSameUser_OnlyCreatedOneVoteWhenCalledMultipleTimes()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+            controller.WithAuthenticatedUser("Brent","ImBrent");
+
+            var lunch = new Lunch()
+            {
+                Host = "Brent",
+                MeetingTime = new DateTime(1985, 6, 6),
+                Restaurants = new List<Restaurant>()
+                {
+                    new Restaurant { Name = "Linda's", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "The Pine Box", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "Sizzler", Latitude = 55, Longitude = 60 }
+                }
+            };
+
+            _context.Lunches.Add(lunch);
+            _context.SaveChanges();
+
+            var restaurantId = lunch.Restaurants.First().Id;
+            var lunchId = lunch.Id;
+            // Act
+
+            var result1 = controller.Upvote(lunchId, restaurantId);
+            var result2 = controller.Upvote(lunchId, restaurantId);
+
+            // Assert
+            var numberOfVotes = _context.Votes.Count();
+            numberOfVotes.ShouldBe(1);
+
+            var voteValue = _context.Votes
+                .Where(v => v.Restaurant.Id == restaurantId)
+                .Where(v => v.Lunch.Id == lunchId)
+                .Sum(v => v.Value);
+
+            voteValue.ShouldBe(1);
+        }
+
+        [Test]
+        public void Upvote_PostWithDifferntUser_CreatedOneVoteWhenCalledMultipleTimes()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+            controller.WithAuthenticatedUser("Brent", "ImBrent");
+
+            var lunch = new Lunch()
+            {
+                Host = "Brent",
+                MeetingTime = new DateTime(1985, 6, 6),
+                Restaurants = new List<Restaurant>()
+                {
+                    new Restaurant { Name = "Linda's", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "The Pine Box", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "Sizzler", Latitude = 55, Longitude = 60 }
+                }
+            };
+
+            _context.Lunches.Add(lunch);
+            _context.SaveChanges();
+
+            var restaurantId = lunch.Restaurants.First().Id;
+            var lunchId = lunch.Id;
+
+            var existingVote = new Vote
+            {
+                Restaurant = _context.Restaurants.Find(restaurantId),
+                Lunch = _context.Lunches.Find(lunchId),
+                Value = 100000,
+                UserName = "Someone Else"
+            };
+            _context.Votes.Add(existingVote);
+            _context.SaveChanges();
+
+            // Act
+
+            var result1 = controller.Upvote(lunchId, restaurantId);
+            var result2 = controller.Upvote(lunchId, restaurantId);
+
+            // Assert
+            var numberOfVotes = _context.Votes.Count();
+            numberOfVotes.ShouldBe(2);
+
+            var voteValue = _context.Votes
+                .Where(v => v.Restaurant.Id == restaurantId)
+                .Where(v => v.Lunch.Id == lunchId)
+                .Where(v=>v.UserName == "Brent")
+                .Sum(v => v.Value);
+
+            voteValue.ShouldBe(1);
+        }
+
+        [Test]
         public void Downvote_Post_CreatesNewRecordAndSavesToDb()
         {
             // Arrange
             var controller = new LunchesController(_context);
+            controller.WithAuthenticatedUser("Brent", "ImBrent");
 
             var lunch = new Lunch()
             {
