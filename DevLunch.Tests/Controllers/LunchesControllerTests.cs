@@ -174,12 +174,41 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Create(new LunchCreateEditViewModel 
             {
                 Host = "Brent",
-                MeetingTime = new DateTime(1999, 12, 31)
+                MeetingTime = new DateTime(1999, 12, 31),
+                Restaurants = new List<CheckBoxListItem>()
+                {
+                    new CheckBoxListItem { Display = "some restaurant", IsChecked = true }
+                }
             }) as RedirectToRouteResult;
 
             // Assert
-            _context.Lunches.First().ShouldNotBeNull();
+            var sut = _context.Lunches.First();
+            sut.ShouldNotBeNull();
+            sut.Restaurants.ShouldNotBeEmpty();
             result.RouteValues["action"].ShouldBe("Index");
+        }
+
+        [Test]
+        public void Create_Post_ModelStateIsInvalidIfNoRestaurantSelected()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+
+            // Act
+            var result = controller.Create(new LunchCreateEditViewModel
+            {
+                Host = "Brent",
+                MeetingTime = new DateTime(1999, 12, 31),
+                Restaurants = new List<CheckBoxListItem>()
+                {
+                    new CheckBoxListItem { Display = "some restaurant", IsChecked = false }
+                }
+            }) as RedirectToRouteResult;
+
+            // Assert
+            var sut = _context.Lunches.First();
+            sut.ShouldNotBeNull();
+            
         }
 
         [Test]
