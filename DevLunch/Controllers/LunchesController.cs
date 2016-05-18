@@ -66,7 +66,7 @@ namespace DevLunch.Controllers
         // GET: Lunches/Create
         public ActionResult Create()
         {
-            var lunchViewModel = new LunchViewModel();
+            var lunchCreateEditViewModel = new LunchCreateEditViewModel();
 
             var allRestaurants = _context.Restaurants.ToList();
 
@@ -82,24 +82,24 @@ namespace DevLunch.Controllers
                 });
             }
 
-            lunchViewModel.Restaurants = checkBoxListItems;
+            lunchCreateEditViewModel.Restaurants = checkBoxListItems;
 
-            return View("Create", lunchViewModel);
+            return View("Create", lunchCreateEditViewModel);
         }
 
         // POST: Lunches/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(LunchViewModel lunchViewModel)
+        public ActionResult Create(LunchCreateEditViewModel lunchCreateEditViewModel)
         {
-            var selectedRestaurants = lunchViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
+            var selectedRestaurants = lunchCreateEditViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
 
             if (ModelState.IsValid)
             {
                 var lunch = new Lunch()
                 {
-                    Host = lunchViewModel.Host,
-                    MeetingTime = lunchViewModel.MeetingTime
+                    Host = lunchCreateEditViewModel.Host,
+                    MeetingTime = lunchCreateEditViewModel.MeetingTime
                 };
 
                 foreach (var restaurantID in selectedRestaurants)
@@ -114,7 +114,7 @@ namespace DevLunch.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View("Create", lunchViewModel);
+            return View("Create", lunchCreateEditViewModel);
         }
 
         // GET: Lunches/Edit/5
@@ -133,7 +133,7 @@ namespace DevLunch.Controllers
                     .Include(l => l.Restaurants)
                     .First(l => l.Id == id);
 
-            var lunchViewModel = new LunchViewModel
+            var lunchCreateEditViewModel = new LunchCreateEditViewModel
             {
                 Host = lunch.Host,
                 MeetingTime = lunch.MeetingTime,
@@ -154,14 +154,14 @@ namespace DevLunch.Controllers
                 });
             }
 
-            lunchViewModel.Restaurants = checkBoxListItems;
-            return View("Edit", lunchViewModel);
+            lunchCreateEditViewModel.Restaurants = checkBoxListItems;
+            return View("Edit", lunchCreateEditViewModel);
         }
 
         //POST: Lunches/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, LunchViewModel lunchViewModel)
+        public ActionResult Edit(int id, LunchCreateEditViewModel lunchCredteEditViewModel)
         {
             var lunch = _context
                 .Lunches
@@ -170,15 +170,15 @@ namespace DevLunch.Controllers
 
             if (ModelState.IsValid)
             {
-                lunch.Host = lunchViewModel.Host;
-                lunch.MeetingTime = lunchViewModel.MeetingTime;
+                lunch.Host = lunchCredteEditViewModel.Host;
+                lunch.MeetingTime = lunchCredteEditViewModel.MeetingTime;
 
                 _context.Entry(lunch).State = EntityState.Modified;
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View("Edit", lunchViewModel);
+            return View("Edit", lunchCredteEditViewModel);
         }
 
         // GET: Lunches/Delete/5

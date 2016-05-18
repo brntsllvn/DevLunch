@@ -4,9 +4,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace DevLunch.ViewModels
 {
-    public class LunchViewModel
+    public class LunchCreateEditViewModel
     {
-        public LunchViewModel()
+        public LunchCreateEditViewModel()
         {
             Restaurants = new List<CheckBoxListItem>();
         }
