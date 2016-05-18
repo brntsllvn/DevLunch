@@ -469,6 +469,48 @@ namespace DevLunch.Tests.Controllers
         }
 
         [Test]
+        public void Downvote_PostWithSameUserDifferentRestaurant_PreviousDownVoteRemovedAndNewDownvoteApplied()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+            controller.WithAuthenticatedUser("Brent", "ImBrent");
+
+            var lunch = new Lunch()
+            {
+                Host = "Brent",
+                MeetingTime = new DateTime(1985, 6, 6),
+                Restaurants = new List<Restaurant>()
+                {
+                    new Restaurant { Name = "Linda's", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "The Pine Box", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "Sizzler", Latitude = 55, Longitude = 60 }
+                }
+            };
+
+            _context.Lunches.Add(lunch);
+            _context.SaveChanges();
+
+            var restaurantId1 = lunch.Restaurants.First().Id;
+            var restaurantId2 = lunch.Restaurants.Last().Id;
+            var lunchId = lunch.Id;
+            // Act
+
+            var result1 = controller.Downvote(lunchId, restaurantId1);
+            var result2 = controller.Downvote(lunchId, restaurantId2);
+
+            // Assert
+            var numberOfVotes = _context.Votes.Count();
+            numberOfVotes.ShouldBe(1);
+
+            var vote = _context.Votes.First();
+            vote.Restaurant.Id.ShouldBe(restaurantId2);
+            vote.Lunch.Id.ShouldBe(lunchId);
+            vote.UserName.ShouldBe("Brent");
+            vote.VoteType.ShouldBe(VoteType.Downvote);
+            vote.Value.ShouldBe(-2);
+        }
+
+        [Test]
         public void Upvote_PostWithDifferntUser_CreatedOneVoteWhenCalledMultipleTimes()
         {
             // Arrange

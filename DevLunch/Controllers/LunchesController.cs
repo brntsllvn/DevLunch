@@ -212,15 +212,12 @@ namespace DevLunch.Controllers
         [HttpPost]
         public ActionResult Upvote(int lunchId, int restaurantId)
         {
-            // todo: only valid PPA user can vote
-            // todo: only one upvote per restaurant per user
             return CreateVote(lunchId, restaurantId, VoteType.Upvote);
         }
 
         [HttpPost]
         public ActionResult Downvote(int lunchId, int restaurantId)
         {
-            // todo: only valid PPA user can vote
             // todo: only one downvote per user, period
             return CreateVote(lunchId, restaurantId, VoteType.Downvote);
         }
