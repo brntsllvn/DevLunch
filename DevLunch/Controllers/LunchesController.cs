@@ -14,7 +14,7 @@ namespace DevLunch.Controllers
         private readonly DevLunchDbContext _context;
 
         public LunchesController() : this(new DevLunchDbContext())
-        {}
+        { }
 
         public LunchesController(DevLunchDbContext context)
         {
@@ -40,7 +40,7 @@ namespace DevLunch.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
 
             var lunch = _context.Lunches.Find(id);
-            
+
             if (lunch == null)
                 return new HttpNotFoundResult();
 
@@ -70,11 +70,13 @@ namespace DevLunch.Controllers
 
             var checkBoxListItems = allRestaurants.Select(restaurant => new CheckBoxListItem()
             {
-                ID = restaurant.Id, Display = restaurant.Name, IsChecked = false
+                ID = restaurant.Id,
+                Display = restaurant.Name,
+                IsChecked = false
             }).ToList();
 
             lunchCreateEditViewModel.Restaurants = checkBoxListItems;
-   
+
             return View("Create", lunchCreateEditViewModel);
         }
 
@@ -84,14 +86,14 @@ namespace DevLunch.Controllers
 
         public ActionResult Create(LunchCreateEditViewModel lunchCreateEditViewModel)
         {
-  
+
             var selectedRestaurants = lunchCreateEditViewModel.Restaurants.Where(r => r.IsChecked).Select(r => r.ID).ToList();
 
             if (ModelState.IsValid)
             {
                 var lunch = new Lunch()
                 {
-    
+
                     Host = lunchCreateEditViewModel.Host,
                     MeetingTime = lunchCreateEditViewModel.MeetingTime
                 };
@@ -128,7 +130,7 @@ namespace DevLunch.Controllers
                     .Include(l => l.Restaurants)
                     .First(l => l.Id == id);
 
-      
+
             var lunchCreateEditViewModel = new LunchCreateEditViewModel
             {
                 Host = lunch.Host,
@@ -140,7 +142,9 @@ namespace DevLunch.Controllers
             var allRestaurants = _context.Restaurants.ToList();
             var checkBoxListItems = allRestaurants.Select(restaurant => new CheckBoxListItem
             {
-                ID = restaurant.Id, Display = restaurant.Name, IsChecked = lunchRestaurants.Any(r => r.Id == restaurant.Id)
+                ID = restaurant.Id,
+                Display = restaurant.Name,
+                IsChecked = lunchRestaurants.Any(r => r.Id == restaurant.Id)
             }).ToList();
 
 
@@ -164,7 +168,7 @@ namespace DevLunch.Controllers
 
             if (ModelState.IsValid)
             {
- 
+
                 lunch.Host = lunchCredteEditViewModel.Host;
                 lunch.MeetingTime = lunchCredteEditViewModel.MeetingTime;
 
@@ -218,7 +222,6 @@ namespace DevLunch.Controllers
         [HttpPost]
         public ActionResult Downvote(int lunchId, int restaurantId)
         {
-            // todo: only one downvote per user, period
             return CreateVote(lunchId, restaurantId, VoteType.Downvote);
         }
 
@@ -232,17 +235,18 @@ namespace DevLunch.Controllers
             if (restaurant == null)
                 return new HttpStatusCodeResult(HttpStatusCode.NotFound, $"Specified restaurant '{restaurantId}' does not exist");
 
-            if(User?.Identity == null)
+            if (User?.Identity == null)
                 return new HttpStatusCodeResult(HttpStatusCode.Unauthorized);
 
             var userName = User.Identity.Name;
-            var existingVote = _context.Votes
-                .Where(v => v.Restaurant.Id == restaurantId)
-                .Where(v => v.Lunch.Id == lunchId)
-                .FirstOrDefault(v => v.UserName == userName);
 
             var voteValue = GetVoteValue(type);
-            if (existingVote == null)
+
+            var existingVotes = _context.Votes
+                .Where(v => v.Lunch.Id == lunchId)
+                .Any(v => v.UserName == userName);
+
+            if (!existingVotes)
             {
                 var newVote = new Vote
                 {
@@ -253,19 +257,35 @@ namespace DevLunch.Controllers
                     VoteType = type
                 };
                 _context.Votes.Add(newVote);
-
             }
             else
             {
-                existingVote.Value = voteValue;
-                existingVote.VoteType = type;
+                var existingDownvote = _context.Votes
+                    .Where(v => v.Lunch.Id == lunchId)
+                    .SingleOrDefault(v => v.VoteType == VoteType.Downvote);
+
+                if (existingDownvote != null)
+                {
+                    existingDownvote.Restaurant = restaurant;
+                }
+                else
+                {
+                    var existingUpvote = _context.Votes
+                        .Where(v => v.Restaurant.Id == restaurantId)
+                        .Where(v => v.Lunch.Id == lunchId)
+                        .FirstOrDefault(v => v.UserName == userName);
+
+                    existingUpvote.VoteType = VoteType.Downvote;
+                    existingUpvote.Value = voteValue;
+                }
             }
 
             _context.SaveChanges();
 
-            var totalVotevalue = _context.Votes
-                .Where(v => v.Restaurant.Id == restaurantId && v.Lunch.Id == lunchId)
-                .Sum(v => v.Value);
+            var totalVotevalue = 0;
+            //_context.Votes
+            //.Where(v => v.Restaurant.Id == restaurantId && v.Lunch.Id == lunchId)
+            //.Sum(v => v.Value);
 
             return Json(totalVotevalue);
         }

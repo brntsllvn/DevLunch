@@ -503,11 +503,13 @@ namespace DevLunch.Tests.Controllers
             numberOfVotes.ShouldBe(1);
 
             var vote = _context.Votes.First();
-            vote.Restaurant.Id.ShouldBe(restaurantId2);
-            vote.Lunch.Id.ShouldBe(lunchId);
-            vote.UserName.ShouldBe("Brent");
-            vote.VoteType.ShouldBe(VoteType.Downvote);
-            vote.Value.ShouldBe(-2);
+            vote.ShouldSatisfyAllConditions(
+                () => vote.Restaurant.Id.ShouldBe(restaurantId2),
+                () => vote.Lunch.Id.ShouldBe(lunchId),
+                () => vote.UserName.ShouldBe("Brent"),
+                () => vote.VoteType.ShouldBe(VoteType.Downvote),
+                () => vote.Value.ShouldBe(-2)
+                );
         }
 
         [Test]
