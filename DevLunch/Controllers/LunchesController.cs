@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -282,12 +283,37 @@ namespace DevLunch.Controllers
 
             _context.SaveChanges();
 
-            var totalVotevalue = 0;
-            //_context.Votes
-            //.Where(v => v.Restaurant.Id == restaurantId && v.Lunch.Id == lunchId)
-            //.Sum(v => v.Value);
+            var totalLunchRestaurantVoteValue = new Dictionary<Tuple<int, int>, int>();
+            var allTotalLunchRestaurantVoteValues = new List<Dictionary<Tuple<int, int>, int>>();
 
-            return Json(totalVotevalue);
+            var lunchRestaurants = _context.Lunches.Where(l => l.Id == lunchId).Include(l => l.Restaurants).ToList();
+
+            foreach (var lunchRestaurant in lunchRestaurants)
+            {
+                // Make sure we have votes to sum over...
+                var existingLunchRestaurantVotes = _context.Votes
+                    .Where(v => v.Lunch.Id == lunchId)
+                    .Where(v => v.Restaurant.Id == lunchRestaurant.Id)
+                    .Any(v => v.UserName == userName);
+
+                Int32 voteTotal;
+                if (existingLunchRestaurantVotes)
+                {
+                     voteTotal = _context.Votes
+                        .Where(v => v.Lunch.Id == lunchId)
+                        .Where(v => v.Restaurant.Id == lunchRestaurant.Id)
+                        .Sum(v => v.Value);
+                }
+                else
+                {
+                    voteTotal = 0;
+                }
+
+                totalLunchRestaurantVoteValue.Add(Tuple.Create(lunchId, lunchRestaurant.Id), voteTotal);
+                allTotalLunchRestaurantVoteValues.Add(totalLunchRestaurantVoteValue);
+            }
+
+            return Json(allTotalLunchRestaurantVoteValues);
         }
 
         private static int GetVoteValue(VoteType type)
