@@ -422,7 +422,7 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Upvote(lunch.Id, lunch.Restaurants.First().Id);
 
             // Assert
-            var vote = _context.Votes.First();
+            var vote = _context.Votes.FirstOrDefault();
             vote.ShouldNotBeNull();
             vote.Value.ShouldBe(1);
         }
@@ -537,23 +537,45 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
 
             var restaurantId1 = lunch.Restaurants.First().Id;
-            var restaurantId2 = lunch.Restaurants.Single(r=>r.Id==1).Id;
+            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name=="RedLobster").Id;
             var restaurantId3 = lunch.Restaurants.Last().Id;
 
             // Act
 
             var result1 = controller.Upvote(lunchId, restaurantId1);
-            var result2 = controller.Upvote(lunchId, restaurantId2);
             var result3 = controller.Downvote(lunchId, restaurantId2);
             var result4 = controller.Downvote(lunchId, restaurantId3);
 
             // Assert
             var numberOfVotes = _context.Votes.Count();
-            numberOfVotes.ShouldBe(1);
+            numberOfVotes.ShouldBe(2);
 
-            _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId1).Sum(v => v.Value).ShouldBe(1);
-            _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId2).Sum(v => v.Value).ShouldBe(0);
-            _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId3).Sum(v => v.Value).ShouldBe(-2);
+            var existingRestaurant1Votes = _context.Votes
+                .Where(v => v.Lunch.Id == lunchId)
+                .Any(v => v.Restaurant.Id == restaurantId1);
+
+            if (existingRestaurant1Votes)
+            {
+                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId1).Sum(v => v.Value).ShouldBe(1);
+            }
+
+            var existingRestaurant2Votes = _context.Votes
+                .Where(v => v.Lunch.Id == lunchId)
+                .Any(v => v.Restaurant.Id == restaurantId2);
+
+            if (existingRestaurant2Votes)
+            {
+                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId2).Sum(v => v.Value).ShouldBe(0);
+            }
+
+            var existingRestaurant3Votes = _context.Votes
+                .Where(v => v.Lunch.Id == lunchId)
+                .Any(v => v.Restaurant.Id == restaurantId3);
+
+            if (existingRestaurant3Votes)
+            {
+                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId3).Sum(v => v.Value).ShouldBe(-2);
+            }
         }
 
         [Test]
