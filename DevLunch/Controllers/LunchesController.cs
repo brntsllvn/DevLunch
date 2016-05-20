@@ -275,7 +275,6 @@ namespace DevLunch.Controllers
                     existingUpvoteOnSameRestaurant.VoteType = VoteType.Downvote;
                     existingUpvoteOnSameRestaurant.Value = voteValue;
 
-                    // scenario: upvote1 -> downvote3 -> downvote1 (changes upvote to new downvote, deletes original downvote)
                     if (existingDownvoteOnDifferentRestaurant != null)
                     {
                         RemoveExistingDownvote();
@@ -288,7 +287,6 @@ namespace DevLunch.Controllers
                 {
                     existingDownvoteOnSameRestaurant.VoteType = VoteType.Upvote;
                     existingDownvoteOnSameRestaurant.Value = voteValue;
-                    RemoveExistingDownvote();
                 }
             }
             else if (existingDownvoteOnDifferentRestaurant != null)
