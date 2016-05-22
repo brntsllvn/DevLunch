@@ -2,9 +2,9 @@
 {
     public class VoteViewModel
     {
-        public int? oldLunchRestaurantId { get; set; }
-        public int? oldLunchRestaurantVoteTotal { get; set; }
-        public int newLunchRestaurantId { get; set; }
-        public int newLunchRestaurantVotetotal { get; set; }
+        public int? OldLunchRestaurantId { get; set; }
+        public int? OldLunchRestaurantVoteTotal { get; set; }
+        public int NewLunchRestaurantId { get; set; }
+        public int NewLunchRestaurantVotetotal { get; set; }
     }
 }

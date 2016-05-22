@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
@@ -419,9 +420,19 @@ namespace DevLunch.Tests.Controllers
             _context.SaveChanges();
 
             // Act
-            var result = controller.Upvote(lunch.Id, lunch.Restaurants.First().Id);
+            var result = controller.Upvote(lunch.Id, lunch.Restaurants.First().Id) as JsonResult;
 
             // Assert
+            var voteViewModel = result.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBeNull(),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                );
+
             var vote = _context.Votes.FirstOrDefault();
             vote.ShouldNotBeNull();
             vote.Value.ShouldBe(1);
@@ -453,10 +464,19 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId);
-            var result2 = controller.Upvote(lunchId, restaurantId);
+            var result1 = controller.Upvote(lunchId, restaurantId) as JsonResult;
+            var result2 = controller.Upvote(lunchId, restaurantId) as JsonResult;
 
             // Assert
+            var voteViewModel = result2.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBeNull(),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                );
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
@@ -495,10 +515,20 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
             // Act
 
-            var result1 = controller.Downvote(lunchId, restaurantId1);
-            var result2 = controller.Downvote(lunchId, restaurantId2);
+            var result1 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
+            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
 
             // Assert
+            var voteViewModel = result2.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBe(1),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(3),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(-2)
+                );
+
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
@@ -542,11 +572,21 @@ namespace DevLunch.Tests.Controllers
 
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId1);
-            var result3 = controller.Downvote(lunchId, restaurantId2);
-            var result4 = controller.Downvote(lunchId, restaurantId3);
+            var result1 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
+            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
+            var result3 = controller.Downvote(lunchId, restaurantId3) as JsonResult;
 
             // Assert
+            var voteViewModel = result3.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBe(2),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(3),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(-2)
+                );
+
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(2);
 
@@ -608,12 +648,22 @@ namespace DevLunch.Tests.Controllers
 
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId1);
-            var result3 = controller.Downvote(lunchId, restaurantId2);
-            var result4 = controller.Downvote(lunchId, restaurantId3);
-            var result5 = controller.Downvote(lunchId, restaurantId1);
+            var result1 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
+            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
+            var result3 = controller.Downvote(lunchId, restaurantId3) as JsonResult;
+            var result4 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
 
             // Assert
+            var voteViewModel = result4.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBe(3),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(-2)
+                );
+
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
@@ -675,13 +725,23 @@ namespace DevLunch.Tests.Controllers
 
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId1);
-            var result3 = controller.Downvote(lunchId, restaurantId2);
-            var result4 = controller.Downvote(lunchId, restaurantId3);
-            var result5 = controller.Downvote(lunchId, restaurantId1);
-            var result6 = controller.Upvote(lunchId, restaurantId1);
+            var result1 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
+            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
+            var result3 = controller.Downvote(lunchId, restaurantId3) as JsonResult;
+            var result4 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
+            var result5 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
 
             // Assert
+            var voteViewModel = result5.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBeNull(),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                );
+
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
@@ -744,15 +804,25 @@ namespace DevLunch.Tests.Controllers
             // Act
 
             var result1 = controller.Upvote(lunchId, restaurantId1);
-            var result3 = controller.Downvote(lunchId, restaurantId2);
-            var result4 = controller.Downvote(lunchId, restaurantId3);
-            var result5 = controller.Downvote(lunchId, restaurantId1);
-            var result6 = controller.Upvote(lunchId, restaurantId1);
-            var result7 = controller.Downvote(lunchId, restaurantId1);
-            var result8 = controller.Upvote(lunchId, restaurantId2);
-            var result9 = controller.Upvote(lunchId, restaurantId3);
+            var result2 = controller.Downvote(lunchId, restaurantId2);
+            var result3 = controller.Downvote(lunchId, restaurantId3);
+            var result4 = controller.Downvote(lunchId, restaurantId1);
+            var result5 = controller.Upvote(lunchId, restaurantId1);
+            var result6 = controller.Downvote(lunchId, restaurantId1);
+            var result7 = controller.Upvote(lunchId, restaurantId2);
+            var result8 = controller.Upvote(lunchId, restaurantId3) as JsonResult;
 
             // Assert
+            var voteViewModel = result8.Data as VoteViewModel;
+            voteViewModel.ShouldNotBeNull();
+
+            voteViewModel.ShouldSatisfyAllConditions(
+                () => voteViewModel.OldLunchRestaurantId.ShouldBe(1),
+                () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(-2),
+                () => voteViewModel.NewLunchRestaurantId.ShouldBe(3),
+                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                );
+
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 

@@ -310,10 +310,10 @@ namespace DevLunch.Controllers
 
             var voteViewModel = new VoteViewModel
             {
-                newLunchRestaurantId = restaurantId,
-                newLunchRestaurantVotetotal = CalculateVoteTotal(lunchId, restaurantId),
-                oldLunchRestaurantId = existingDownvoteRestaurantId,
-                oldLunchRestaurantVoteTotal = CalculateVoteTotal(lunchId, existingDownvoteRestaurantId)
+                NewLunchRestaurantId = restaurantId,
+                NewLunchRestaurantVotetotal = CalculateVoteTotal(lunchId, restaurantId, voteValue),
+                OldLunchRestaurantId = existingDownvoteRestaurantId,
+                OldLunchRestaurantVoteTotal = CalculateVoteTotal(lunchId, existingDownvoteRestaurantId, voteValue)
             };
 
             return Json(voteViewModel, JsonRequestBehavior.AllowGet);
@@ -325,17 +325,18 @@ namespace DevLunch.Controllers
             _context.Votes.Remove(existingDownvote);
         }
 
-        private int CalculateVoteTotal(int lunchId, int? restaurantId)
+        private int CalculateVoteTotal(int lunchId, int? restaurantId, int voteValue)
         {
             if (restaurantId == null)
                 return 0;
 
-            var existingLunchRestaurantVotes = _context.Votes
+            // make sure there are votes to sum over or else the query breaks
+            var existingVotesOnSameRestaurant = _context.Votes
                 .Where(v => v.Lunch.Id == lunchId)
                 .Any(v => v.Restaurant.Id == restaurantId);
 
             Int32 voteTotal;
-            if (existingLunchRestaurantVotes)
+            if (existingVotesOnSameRestaurant)
             {
                 voteTotal = _context.Votes
                     .Where(v => v.Lunch.Id == lunchId)
@@ -344,8 +345,9 @@ namespace DevLunch.Controllers
             }
             else
             {
-                voteTotal = 0;
+                voteTotal = voteValue;
             }
+
             return voteTotal;
         }
 
