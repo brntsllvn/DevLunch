@@ -244,17 +244,11 @@ namespace DevLunch.Controllers
 
             var voteValue = GetVoteValue(type);
 
-            var existingVotes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.UserName == userName);
-
             var existingUpvoteOnSameRestaurant = _context.Votes
                 .Where(v => v.Lunch.Id == lunchId)
                 .Where(v=> v.Restaurant.Id == restaurantId)
                 .Where(v => v.VoteType == VoteType.Upvote)
                 .SingleOrDefault(v => v.UserName == userName);
-
-            var upvotingNewRestaurant = type == VoteType.Upvote && existingUpvoteOnSameRestaurant == null;
 
             var existingDownvoteOnSameRestaurant = _context.Votes
                 .Where(v => v.Lunch.Id == lunchId)
@@ -263,10 +257,13 @@ namespace DevLunch.Controllers
                 .SingleOrDefault(v => v.UserName == userName);
 
             var existingDownvoteOnDifferentRestaurant = _context.Votes
+                .Include(v => v.Restaurant)
                 .Where(v => v.Lunch.Id == lunchId)
                 .Where(v => v.Restaurant.Id != restaurantId)
                 .Where(v => v.VoteType == VoteType.Downvote)
                 .SingleOrDefault(v => v.UserName == userName);
+
+            var existingDownvoteRestaurantId = existingDownvoteOnDifferentRestaurant?.Restaurant.Id;
 
             if (existingUpvoteOnSameRestaurant != null)
             {
@@ -311,42 +308,15 @@ namespace DevLunch.Controllers
 
             _context.SaveChanges();
 
-            var voteTotal = CalculateVoteTotal(lunchId, restaurantId, userName);
-
-            return Json(voteTotal);
-
-            var totalLunchRestaurantVoteValue = new Dictionary<Tuple<int, int>, int>();
-            var allTotalLunchRestaurantVoteValues = new List<Dictionary<Tuple<int, int>, int>>();
-
-            var lunchRestaurants = _context.Lunches.Where(l => l.Id == lunchId).Include(l => l.Restaurants).ToList();
-
-            foreach (var lunchRestaurant in lunchRestaurants)
+            var voteViewModel = new VoteViewModel
             {
-                //// Make sure we have votes to sum over...
-                //var existingLunchRestaurantVotes = _context.Votes
-                //    .Where(v => v.Lunch.Id == lunchId)
-                //    .Where(v => v.Restaurant.Id == lunchRestaurant.Id)
-                //    .Any(v => v.UserName == userName);
+                newLunchRestaurantId = restaurantId,
+                newLunchRestaurantVotetotal = CalculateVoteTotal(lunchId, restaurantId),
+                oldLunchRestaurantId = existingDownvoteRestaurantId,
+                oldLunchRestaurantVoteTotal = CalculateVoteTotal(lunchId, existingDownvoteRestaurantId)
+            };
 
-                //Int32 voteTotal;
-                //if (existingLunchRestaurantVotes)
-                //{
-                //     voteTotal = _context.Votes
-                //        .Where(v => v.Lunch.Id == lunchId)
-                //        .Where(v => v.Restaurant.Id == lunchRestaurant.Id)
-                //        .Sum(v => v.Value);
-                //}
-                //else
-                //{
-                //    voteTotal = 0;
-                //}
-
-                //totalLunchRestaurantVoteValue.Add(Tuple.Create(lunchId, lunchRestaurant.Id), voteTotal);
-                //allTotalLunchRestaurantVoteValues.Add(totalLunchRestaurantVoteValue);
-            }
-
-            //return Json(allTotalLunchRestaurantVoteValues);
-            return Json(0);
+            return Json(voteViewModel, JsonRequestBehavior.AllowGet);
         }
 
         private void RemoveExistingDownvote()
@@ -355,8 +325,11 @@ namespace DevLunch.Controllers
             _context.Votes.Remove(existingDownvote);
         }
 
-        private int CalculateVoteTotal(int lunchId, int restaurantId, string userName)
+        private int CalculateVoteTotal(int lunchId, int? restaurantId)
         {
+            if (restaurantId == null)
+                return 0;
+
             var existingLunchRestaurantVotes = _context.Votes
                 .Where(v => v.Lunch.Id == lunchId)
                 .Any(v => v.Restaurant.Id == restaurantId);

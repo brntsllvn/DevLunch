@@ -150,10 +150,10 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Validations\AtLeastOneCheckBoxMustBeSelectedAttribute.cs" />
     <Compile Include="ViewModels\CheckBoxListItem.cs" />
     <Compile Include="ViewModels\LunchDetailsViewModel.cs" />
     <Compile Include="ViewModels\LunchCreateEditViewModel.cs" />
+    <Compile Include="ViewModels\VoteViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-theme.css" />
