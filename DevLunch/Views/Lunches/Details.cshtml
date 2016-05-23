@@ -28,34 +28,18 @@
                 
                 @Ajax.ActionLink("Upvote", "Upvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
                     new AjaxOptions {HttpMethod = "POST",
-                        OnComplete = "Complete",
+                        OnComplete = "UpdateVoteTotals"},
                         //UpdateTargetId = $"{lunchRestaurantId}",
-                        InsertionMode = InsertionMode.Replace},
+                        //InsertionMode = InsertionMode.Replace},
                     new {@class = "btn btn-success btn-sm"})
 
-                <script type="text/javascript">
-                    function Complete(voteData) {
-                        //var JsonObj = $.parseJSON(data.responseText);
-
-                        // receive object from controller
-                        var newVoteRestaurantId    = voteData.responseJSON.newLunchRestaurantId;
-                        var newRestaurantVoteValue = voteData.responseJSON.newLunchRestaurantVotetotal;
-                        var oldVoteRestaurantId    = voteData.responseJSON.oldLunchRestaurantId;
-                        var oldRestaurantVoteValue = voteData.responseJSON.oldLunchRestaurantVoteTotal;
-
-                        // transform (lunch, restaurant) pairs into IDs on spans whose HTML you'll update
-                        var oldLunchRestaurantId = '#@($"vote-count-for-lunch-{Model.Id}-restaurant-")' + oldVoteRestaurantId;
-                        alert(JSON.stringify(oldLunchRestaurantId));
-
-                        $('#@($"{lunchRestaurantId}")').html(newRestaurantVoteValue);
-                        $(oldLunchRestaurantId).html(oldRestaurantVoteValue);
-                    }
-                </script>
-
                 @Ajax.ActionLink("Downvote", "Downvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
-                    new AjaxOptions {HttpMethod = "POST", UpdateTargetId = $"{lunchRestaurantId}", InsertionMode = InsertionMode.Replace},
+                    new AjaxOptions {HttpMethod = "POST",
+                        OnComplete = "UpdateVoteTotals"},
+                        //UpdateTargetId = $"{lunchRestaurantId}",
+                        //InsertionMode = InsertionMode.Replace},
                     new {@class = "btn btn-danger btn-sm"})
-                
+
                 @restaurant.Name
             </dd>
         }
@@ -67,4 +51,18 @@
     @Html.ActionLink("Back to List", "Index")
 </p>
 
+<script type="text/javascript">
+    function UpdateVoteTotals(voteViewModel) {
+        //alert(JSON.stringify(oldLunchRestaurantId));
+        var newVoteRestaurantId    = voteViewModel.responseJSON.NewLunchRestaurantId;
+        var newRestaurantVoteValue = voteViewModel.responseJSON.NewLunchRestaurantVoteTotal;;
+        var oldVoteRestaurantId = voteViewModel.responseJSON.OldLunchRestaurantId || "null";
+        var oldRestaurantVoteValue = voteViewModel.responseJSON.OldLunchRestaurantVoteTotal;
 
+        var newLunchRestaurantSpanId = '#@($"vote-count-for-lunch-{Model.Id}-restaurant-")' + newVoteRestaurantId;
+        var oldLunchRestaurantSpanId = '#@($"vote-count-for-lunch-{Model.Id}-restaurant-")' + oldVoteRestaurantId;
+
+        $(newLunchRestaurantSpanId).html(newRestaurantVoteValue);
+        $(oldLunchRestaurantSpanId).html(oldRestaurantVoteValue);
+    }
+</script>

@@ -430,7 +430,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBeNull(),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(1)
                 );
 
             var vote = _context.Votes.FirstOrDefault();
@@ -475,7 +475,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBeNull(),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(1)
                 );
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
@@ -526,7 +526,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBe(1),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(3),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(-2)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(-2)
                 );
 
             var numberOfVotes = _context.Votes.Count();
@@ -584,7 +584,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBe(2),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(3),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(-2)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(-2)
                 );
 
             var numberOfVotes = _context.Votes.Count();
@@ -661,7 +661,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBe(3),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(-2)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(-2)
                 );
 
             var numberOfVotes = _context.Votes.Count();
@@ -739,7 +739,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBeNull(),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(0),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(1),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(1)
                 );
 
             var numberOfVotes = _context.Votes.Count();
@@ -820,7 +820,7 @@ namespace DevLunch.Tests.Controllers
                 () => voteViewModel.OldLunchRestaurantId.ShouldBe(1),
                 () => voteViewModel.OldLunchRestaurantVoteTotal.ShouldBe(-2),
                 () => voteViewModel.NewLunchRestaurantId.ShouldBe(3),
-                () => voteViewModel.NewLunchRestaurantVotetotal.ShouldBe(1)
+                () => voteViewModel.NewLunchRestaurantVoteTotal.ShouldBe(1)
                 );
 
             var numberOfVotes = _context.Votes.Count();
@@ -906,6 +906,10 @@ namespace DevLunch.Tests.Controllers
 
             voteValue.ShouldBe(1);
         }
+
+        // todo: more multi-user testing
+        // vote total
+        // proper number of records
 
         [Test]
         public void Downvote_Post_CreatesNewRecordAndSavesToDb()

@@ -311,7 +311,7 @@ namespace DevLunch.Controllers
             var voteViewModel = new VoteViewModel
             {
                 NewLunchRestaurantId = restaurantId,
-                NewLunchRestaurantVotetotal = CalculateNewRestaurantVoteTotal(lunchId, restaurantId, true, voteValue),
+                NewLunchRestaurantVoteTotal = CalculateNewRestaurantVoteTotal(lunchId, restaurantId, true, voteValue),
                 OldLunchRestaurantId = existingDownvoteRestaurantId,
                 OldLunchRestaurantVoteTotal = CalculateNewRestaurantVoteTotal(lunchId, existingDownvoteRestaurantId, false, voteValue)
             };
