@@ -51,8 +51,11 @@
     </div>
 </div>
 
+<br/>
+
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    @* todo: only allow editing by the lunch creator *@
+    @Html.ActionLink("Edit", "Edit", new {id = Model.Id}) |
     @Html.ActionLink("Back to List", "Index")
 </p>
 

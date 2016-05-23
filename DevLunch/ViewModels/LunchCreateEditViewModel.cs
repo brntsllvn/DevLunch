@@ -11,7 +11,6 @@ namespace DevLunch.ViewModels
             Restaurants = new List<CheckBoxListItem>();
         }
 
-        [Required]
         public string Host { get; set; }
 
         [Required]
