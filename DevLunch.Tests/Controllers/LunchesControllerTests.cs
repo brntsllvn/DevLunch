@@ -173,7 +173,7 @@ namespace DevLunch.Tests.Controllers
             var controller = new LunchesController(_context);
 
             // Act
-            var result = controller.Create(new LunchCreateEditViewModel 
+            var result = controller.Create(new LunchCreateEditViewModel
             {
                 Host = "Brent",
                 MeetingTime = new DateTime(1999, 12, 31),
@@ -210,7 +210,7 @@ namespace DevLunch.Tests.Controllers
             // Assert
             var sut = _context.Lunches.First();
             sut.ShouldNotBeNull();
-            
+
         }
 
         [Test]
@@ -443,7 +443,7 @@ namespace DevLunch.Tests.Controllers
         {
             // Arrange
             var controller = new LunchesController(_context);
-            controller.WithAuthenticatedUser("Brent","ImBrent");
+            controller.WithAuthenticatedUser("Brent", "ImBrent");
 
             var lunch = new Lunch()
             {
@@ -567,7 +567,7 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
 
             var restaurantId1 = lunch.Restaurants.First().Id;
-            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name=="RedLobster").Id;
+            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name == "RedLobster").Id;
             var restaurantId3 = lunch.Restaurants.Last().Id;
 
             // Act
@@ -643,7 +643,7 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
 
             var restaurantId1 = lunch.Restaurants.First().Id;
-            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name=="RedLobster").Id;
+            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name == "RedLobster").Id;
             var restaurantId3 = lunch.Restaurants.Last().Id;
 
             // Act
@@ -720,7 +720,7 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
 
             var restaurantId1 = lunch.Restaurants.First().Id;
-            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name=="RedLobster").Id;
+            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name == "RedLobster").Id;
             var restaurantId3 = lunch.Restaurants.Last().Id;
 
             // Act
@@ -798,7 +798,7 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
 
             var restaurantId1 = lunch.Restaurants.First().Id;
-            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name=="RedLobster").Id;
+            var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name == "RedLobster").Id;
             var restaurantId3 = lunch.Restaurants.Last().Id;
 
             // Act
@@ -883,7 +883,7 @@ namespace DevLunch.Tests.Controllers
             {
                 Restaurant = _context.Restaurants.Find(restaurantId),
                 Lunch = _context.Lunches.Find(lunchId),
-                Value = 100000,
+                Value = 1,
                 UserName = "Someone Else"
             };
             _context.Votes.Add(existingVote);
@@ -901,15 +901,86 @@ namespace DevLunch.Tests.Controllers
             var voteValue = _context.Votes
                 .Where(v => v.Restaurant.Id == restaurantId)
                 .Where(v => v.Lunch.Id == lunchId)
-                .Where(v=>v.UserName == "Brent")
+                .Where(v => v.UserName == "Brent")
                 .Sum(v => v.Value);
 
             voteValue.ShouldBe(1);
+
+            var allVotesTotal = _context.Votes
+                .Where(v => v.Restaurant.Id == restaurantId)
+                .Where(v => v.Lunch.Id == lunchId)
+                .Sum(v => v.Value);
+
+            allVotesTotal.ShouldBe(2);
         }
 
-        // todo: more multi-user testing
-        // vote total
-        // proper number of records
+        [Test]
+        public void Vote_PostWithDifferntUser_CheckTotalVoteValue()
+        {
+            // Arrange
+            var controller = new LunchesController(_context);
+            controller.WithAuthenticatedUser("Brent", "ImBrent");
+
+            var lunch = new Lunch()
+            {
+                Host = "Brent",
+                MeetingTime = new DateTime(1985, 6, 6),
+                Restaurants = new List<Restaurant>()
+                {
+                    new Restaurant { Name = "Linda's", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "The Pine Box", Latitude = 55, Longitude = 60 },
+                    new Restaurant { Name = "Sizzler", Latitude = 55, Longitude = 60 }
+                }
+            };
+
+            _context.Lunches.Add(lunch);
+            _context.SaveChanges();
+
+            var restaurantId1 = lunch.Restaurants.First().Id;
+            var restaurantId3 = lunch.Restaurants.Last().Id; 
+            var lunchId = lunch.Id;
+
+            var existingVote1 = new Vote
+            {
+                Restaurant = _context.Restaurants.Find(restaurantId1),
+                Lunch = _context.Lunches.Find(lunchId),
+                Value = 1,
+                UserName = "Paul"
+            };
+            var existingVote2 = new Vote
+            {
+                Restaurant = _context.Restaurants.Find(restaurantId3),
+                Lunch = _context.Lunches.Find(lunchId),
+                Value = -2,
+                UserName = "James"
+            };
+            _context.Votes.Add(existingVote1);
+            _context.Votes.Add(existingVote2);
+            _context.SaveChanges();
+
+            // Act
+
+            var result1 = controller.Upvote(lunchId, restaurantId1);
+            var result2 = controller.Downvote(lunchId, restaurantId3);
+
+            // Assert
+            var numberOfVotes = _context.Votes.Count();
+            numberOfVotes.ShouldBe(4);
+
+            var restaurant1VoteTotal = _context.Votes
+                .Where(v => v.Restaurant.Id == restaurantId1)
+                .Where(v => v.Lunch.Id == lunchId)
+                .Sum(v => v.Value);
+
+            restaurant1VoteTotal.ShouldBe(2);
+
+            var restaurant3VoteTotal = _context.Votes
+                .Where(v => v.Restaurant.Id == restaurantId3)
+                .Where(v => v.Lunch.Id == lunchId)
+                .Sum(v => v.Value);
+
+            restaurant3VoteTotal.ShouldBe(-4);
+        }
 
         [Test]
         public void Downvote_Post_CreatesNewRecordAndSavesToDb()

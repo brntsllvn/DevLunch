@@ -29,15 +29,11 @@
                 @Ajax.ActionLink("Upvote", "Upvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
                     new AjaxOptions {HttpMethod = "POST",
                         OnComplete = "UpdateVoteTotals"},
-                        //UpdateTargetId = $"{lunchRestaurantId}",
-                        //InsertionMode = InsertionMode.Replace},
                     new {@class = "btn btn-success btn-sm"})
 
                 @Ajax.ActionLink("Downvote", "Downvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
                     new AjaxOptions {HttpMethod = "POST",
                         OnComplete = "UpdateVoteTotals"},
-                        //UpdateTargetId = $"{lunchRestaurantId}",
-                        //InsertionMode = InsertionMode.Replace},
                     new {@class = "btn btn-danger btn-sm"})
 
                 @restaurant.Name
