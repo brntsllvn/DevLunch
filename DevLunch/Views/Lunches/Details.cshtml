@@ -5,43 +5,52 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2>Lunch</h2>
+
+<h5>@Html.DisplayFor(model => model.Host)</h5>
+<h5>@Html.DisplayFor(model => model.MeetingTime)</h5>
 
 <div>
-    <h4>Lunch</h4>
+
     <hr />
-    <dl class="dl-horizontal">
-        <dt>@Html.DisplayNameFor(model => model.Host)</dt>
+    <div class="container-fluid">
+        <div class="row">
+            @foreach (var restaurant in Model.Restaurants)
+            {
+                String lunchRestaurantId = $"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}";
 
-        <dd>@Html.DisplayFor(model => model.Host)</dd>
+                <div id=@lunchRestaurantId class="col-sm-1">
+                    @Model.Votes.Where(v => v.Restaurant.Id == restaurant.Id).Sum(v => v.Value)
+                </div>
 
-        <dt>@Html.DisplayNameFor(model => model.MeetingTime)</dt>
+                <div class="col-sm-2">
+                    @Ajax.ActionLink(HttpUtility.HtmlDecode("&#9650;"), "Upvote", new { restaurantId = restaurant.Id, lunchId = Model.Id },
+                    new AjaxOptions
+                    {
+                        HttpMethod = "POST",
+                        OnComplete = "UpdateVoteTotals"
+                    },
+                    new { @class = "btn btn-success btn-sm" })
 
-        <dd>@Html.DisplayFor(model => model.MeetingTime)</dd>
+                    @Ajax.ActionLink(HttpUtility.HtmlDecode("&#9660;"), "Downvote", new { restaurantId = restaurant.Id, lunchId = Model.Id },
+                    new AjaxOptions
+                    {
+                        HttpMethod = "POST",
+                        OnComplete = "UpdateVoteTotals"
+                    },
+                    new { @class = "btn btn-danger btn-sm" })
+                </div>
 
-        <dt>Restaurants</dt>
-        @foreach (var restaurant in Model.Restaurants)
-        {
-            String lunchRestaurantId = $"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}";
-            <dd>
-                <span id=@lunchRestaurantId>@Model.Votes.Where(v => v.Restaurant.Id == restaurant.Id).Sum(v => v.Value)</span>
-                
-                @Ajax.ActionLink("Upvote", "Upvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
-                    new AjaxOptions {HttpMethod = "POST",
-                        OnComplete = "UpdateVoteTotals"},
-                    new {@class = "btn btn-success btn-sm"})
+                <div class="col-sm-9">
+                    @restaurant.Name
+                </div>
 
-                @Ajax.ActionLink("Downvote", "Downvote", new {restaurantId = restaurant.Id, lunchId = Model.Id},
-                    new AjaxOptions {HttpMethod = "POST",
-                        OnComplete = "UpdateVoteTotals"},
-                    new {@class = "btn btn-danger btn-sm"})
-
-                @restaurant.Name
-            </dd>
-        }
-
-    </dl>
+                <br><br>
+            }
+        </div>
+    </div>
 </div>
+
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")
@@ -50,7 +59,7 @@
 <script type="text/javascript">
     function UpdateVoteTotals(voteViewModel) {
         //alert(JSON.stringify(oldLunchRestaurantId));
-        var newVoteRestaurantId    = voteViewModel.responseJSON.NewLunchRestaurantId;
+        var newVoteRestaurantId = voteViewModel.responseJSON.NewLunchRestaurantId;
         var newRestaurantVoteValue = voteViewModel.responseJSON.NewLunchRestaurantVoteTotal;;
         var oldVoteRestaurantId = voteViewModel.responseJSON.OldLunchRestaurantId || "null";
         var oldRestaurantVoteValue = voteViewModel.responseJSON.OldLunchRestaurantVoteTotal;

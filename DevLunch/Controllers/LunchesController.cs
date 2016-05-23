@@ -274,7 +274,7 @@ namespace DevLunch.Controllers
 
                     if (existingDownvoteOnDifferentRestaurant != null)
                     {
-                        RemoveExistingDownvote();
+                        RemoveExistingDownvote(lunchId);
                     }
                 }
             }
@@ -319,9 +319,11 @@ namespace DevLunch.Controllers
             return Json(voteViewModel, JsonRequestBehavior.AllowGet);
         }
 
-        private void RemoveExistingDownvote()
+        private void RemoveExistingDownvote(int lunchId)
         {
-            var existingDownvote = _context.Votes.SingleOrDefault(v => v.VoteType == VoteType.Downvote);
+            var existingDownvote = _context.Votes
+                .Where(v => v.Lunch.Id == lunchId)
+                .SingleOrDefault(v => v.VoteType == VoteType.Downvote);
             _context.Votes.Remove(existingDownvote);
         }
 
