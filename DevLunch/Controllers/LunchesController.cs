@@ -311,9 +311,9 @@ namespace DevLunch.Controllers
             var voteViewModel = new VoteViewModel
             {
                 NewLunchRestaurantId = restaurantId,
-                NewLunchRestaurantVotetotal = CalculateVoteTotal(lunchId, restaurantId, voteValue),
+                NewLunchRestaurantVotetotal = CalculateNewRestaurantVoteTotal(lunchId, restaurantId, true, voteValue),
                 OldLunchRestaurantId = existingDownvoteRestaurantId,
-                OldLunchRestaurantVoteTotal = CalculateVoteTotal(lunchId, existingDownvoteRestaurantId, voteValue)
+                OldLunchRestaurantVoteTotal = CalculateNewRestaurantVoteTotal(lunchId, existingDownvoteRestaurantId, false, voteValue)
             };
 
             return Json(voteViewModel, JsonRequestBehavior.AllowGet);
@@ -325,27 +325,35 @@ namespace DevLunch.Controllers
             _context.Votes.Remove(existingDownvote);
         }
 
-        private int CalculateVoteTotal(int lunchId, int? restaurantId, int voteValue)
+        private int CalculateNewRestaurantVoteTotal(int lunchId, int? restaurantId, bool newRestaurant, int voteValue)
         {
             if (restaurantId == null)
                 return 0;
 
-            // make sure there are votes to sum over or else the query breaks
+            // make sure there are votes to sum over or the query breaks
             var existingVotesOnSameRestaurant = _context.Votes
                 .Where(v => v.Lunch.Id == lunchId)
                 .Any(v => v.Restaurant.Id == restaurantId);
 
             Int32 voteTotal;
-            if (existingVotesOnSameRestaurant)
+            if (!existingVotesOnSameRestaurant)
+            {
+                if (newRestaurant)
+                {
+                    voteTotal = voteValue;
+                }
+                else
+                {
+                    voteTotal = 0;
+                }
+                
+            }
+            else
             {
                 voteTotal = _context.Votes
                     .Where(v => v.Lunch.Id == lunchId)
                     .Where(v => v.Restaurant.Id == restaurantId)
                     .Sum(v => v.Value);
-            }
-            else
-            {
-                voteTotal = voteValue;
             }
 
             return voteTotal;

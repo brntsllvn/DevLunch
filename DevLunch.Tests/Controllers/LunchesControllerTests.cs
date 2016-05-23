@@ -464,7 +464,7 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId) as JsonResult;
+            var result1 = controller.Upvote(lunchId, restaurantId);
             var result2 = controller.Upvote(lunchId, restaurantId) as JsonResult;
 
             // Assert
@@ -515,7 +515,7 @@ namespace DevLunch.Tests.Controllers
             var lunchId = lunch.Id;
             // Act
 
-            var result1 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
+            var result1 = controller.Downvote(lunchId, restaurantId1);
             var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
 
             // Assert
@@ -572,8 +572,8 @@ namespace DevLunch.Tests.Controllers
 
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
-            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
+            var result1 = controller.Upvote(lunchId, restaurantId1);
+            var result2 = controller.Downvote(lunchId, restaurantId2);
             var result3 = controller.Downvote(lunchId, restaurantId3) as JsonResult;
 
             // Assert
@@ -648,9 +648,9 @@ namespace DevLunch.Tests.Controllers
 
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
-            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
-            var result3 = controller.Downvote(lunchId, restaurantId3) as JsonResult;
+            var result1 = controller.Upvote(lunchId, restaurantId1);
+            var result2 = controller.Downvote(lunchId, restaurantId2);
+            var result3 = controller.Downvote(lunchId, restaurantId3);
             var result4 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
 
             // Assert
@@ -725,10 +725,10 @@ namespace DevLunch.Tests.Controllers
 
             // Act
 
-            var result1 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
-            var result2 = controller.Downvote(lunchId, restaurantId2) as JsonResult;
-            var result3 = controller.Downvote(lunchId, restaurantId3) as JsonResult;
-            var result4 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
+            var result1 = controller.Upvote(lunchId, restaurantId1);
+            var result2 = controller.Downvote(lunchId, restaurantId2);
+            var result3 = controller.Downvote(lunchId, restaurantId3);
+            var result4 = controller.Downvote(lunchId, restaurantId1);
             var result5 = controller.Upvote(lunchId, restaurantId1) as JsonResult;
 
             // Assert
