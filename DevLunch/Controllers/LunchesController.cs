@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -7,7 +6,6 @@ using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
 using DevLunch.ViewModels;
-using Microsoft.Ajax.Utilities;
 
 namespace DevLunch.Controllers
 {
@@ -265,45 +263,25 @@ namespace DevLunch.Controllers
 
             var existingDownvoteRestaurantId = existingDownvoteOnDifferentRestaurant?.Restaurant.Id;
 
-            if (existingUpvoteOnSameRestaurant != null)
-            {
-                if (type == VoteType.Downvote)
-                {
-                    existingUpvoteOnSameRestaurant.VoteType = VoteType.Downvote;
-                    existingUpvoteOnSameRestaurant.Value = voteValue;
+            var hasExistingUpvote = existingUpvoteOnSameRestaurant != null;
+            var hasExistingDownvote = existingDownvoteOnSameRestaurant != null;
+            var hasDownvoteOnOtherRestaurant = existingDownvoteOnDifferentRestaurant != null;
 
-                    if (existingDownvoteOnDifferentRestaurant != null)
-                    {
-                        RemoveExistingDownvote(lunchId);
-                    }
-                }
-            }
-            else if (existingDownvoteOnSameRestaurant != null)
+            if (hasExistingUpvote)
             {
-                if (type == VoteType.Upvote)
-                {
-                    existingDownvoteOnSameRestaurant.VoteType = VoteType.Upvote;
-                    existingDownvoteOnSameRestaurant.Value = voteValue;
-                }
+                AddDownvoteToSameRestaurant(lunchId, type, existingUpvoteOnSameRestaurant, voteValue, existingDownvoteOnDifferentRestaurant);
             }
-            else if (existingDownvoteOnDifferentRestaurant != null)
+            else if (hasExistingDownvote)
             {
-                if (type == VoteType.Downvote)
-                {
-                    existingDownvoteOnDifferentRestaurant.Restaurant = restaurant;
-                }
+                AddUpvoteToSameRestaurant(type, existingDownvoteOnSameRestaurant, voteValue);
+            }
+            else if (hasDownvoteOnOtherRestaurant)
+            {
+                TransferDownvoteToOtherRestaurant(type, existingDownvoteOnDifferentRestaurant, restaurant);
             }
             else
             {
-                var newVote = new Vote
-                {
-                    Lunch = lunch,
-                    Restaurant = restaurant,
-                    UserName = userName,
-                    Value = voteValue,
-                    VoteType = type
-                };
-                _context.Votes.Add(newVote);
+                AddUpvoteOrDownvoteToRestaurant(type, lunch, restaurant, userName, voteValue);
             }
 
             _context.SaveChanges();
@@ -319,6 +297,51 @@ namespace DevLunch.Controllers
             return Json(voteViewModel, JsonRequestBehavior.AllowGet);
         }
 
+        private void AddDownvoteToSameRestaurant(int lunchId, VoteType type, Vote existingUpvoteOnSameRestaurant, int voteValue, Vote existingDownvoteOnDifferentRestaurant)
+        {
+            if (type == VoteType.Downvote)
+            {
+                existingUpvoteOnSameRestaurant.VoteType = VoteType.Downvote;
+                existingUpvoteOnSameRestaurant.Value = voteValue;
+
+                if (existingDownvoteOnDifferentRestaurant != null)
+                {
+                    RemoveExistingDownvote(lunchId);
+                }
+            }
+        }
+
+        private static void TransferDownvoteToOtherRestaurant(VoteType type, Vote existingDownvoteOnDifferentRestaurant,
+            Restaurant restaurant)
+        {
+            if (type == VoteType.Downvote)
+            {
+                existingDownvoteOnDifferentRestaurant.Restaurant = restaurant;
+            }
+        }
+
+        private static void AddUpvoteToSameRestaurant(VoteType type, Vote existingDownvoteOnSameRestaurant, int voteValue)
+        {
+            if (type == VoteType.Upvote)
+            {
+                existingDownvoteOnSameRestaurant.VoteType = VoteType.Upvote;
+                existingDownvoteOnSameRestaurant.Value = voteValue;
+            }
+        }
+
+        private void AddUpvoteOrDownvoteToRestaurant(VoteType type, Lunch lunch, Restaurant restaurant, string userName, int voteValue)
+        {
+            var newVote = new Vote
+            {
+                Lunch = lunch,
+                Restaurant = restaurant,
+                UserName = userName,
+                Value = voteValue,
+                VoteType = type
+            };
+            _context.Votes.Add(newVote);
+        }
+
         private void RemoveExistingDownvote(int lunchId)
         {
             var existingDownvote = _context.Votes
@@ -332,6 +355,7 @@ namespace DevLunch.Controllers
             if (restaurantId == null)
                 return 0;
 
+            // todo: ask Josh if there is a better way
             // make sure there are votes to sum over or the query breaks
             var existingVotesOnSameRestaurant = _context.Votes
                 .Where(v => v.Lunch.Id == lunchId)
