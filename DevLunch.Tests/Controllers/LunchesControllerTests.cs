@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Web.Helpers;
 using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
@@ -590,25 +589,9 @@ namespace DevLunch.Tests.Controllers
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(2);
 
-            // todo: refactor to use method 
-            AssertRestaurantVote(lunchId, restaurantId1, 1);
-            AssertRestaurantVote(lunchId, restaurantId2, 0);
-            AssertRestaurantVote(lunchId, restaurantId3, -2);
-        }
-
-        private void AssertRestaurantVote(int lunchId, int restaurantId, int expectedVoteValue)
-        {
-            var existingRestaurant3Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId);
-
-            if (existingRestaurant3Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId)
-                    .Where(v => v.Restaurant.Id == restaurantId)
-                    .Sum(v => v.Value)
-                    .ShouldBe(expectedVoteValue);
-            }
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId1, 1);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId2, 0);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId3, -2);
         }
 
         [Test]
@@ -639,14 +622,11 @@ namespace DevLunch.Tests.Controllers
             var restaurantId2 = lunch.Restaurants.FirstOrDefault(r => r.Name == "RedLobster").Id;
             var restaurantId3 = lunch.Restaurants.Last().Id;
 
-            // Act
-
             var result1 = controller.Upvote(lunchId, restaurantId1);
             var result2 = controller.Downvote(lunchId, restaurantId2);
             var result3 = controller.Downvote(lunchId, restaurantId3);
             var result4 = controller.Downvote(lunchId, restaurantId1) as JsonResult;
 
-            // Assert
             var voteViewModel = result4.Data as VoteViewModel;
             voteViewModel.ShouldNotBeNull();
 
@@ -660,32 +640,9 @@ namespace DevLunch.Tests.Controllers
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
-            var existingRestaurant1Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId1);
-
-            if (existingRestaurant1Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId1).Sum(v => v.Value).ShouldBe(-2);
-            }
-
-            var existingRestaurant2Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId2);
-
-            if (existingRestaurant2Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId2).Sum(v => v.Value).ShouldBe(0);
-            }
-
-            var existingRestaurant3Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId3);
-
-            if (existingRestaurant3Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId3).Sum(v => v.Value).ShouldBe(-2);
-            }
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId1, -2);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId2, 0);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId3, -2);
         }
 
         [Test]
@@ -738,32 +695,9 @@ namespace DevLunch.Tests.Controllers
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
-            var existingRestaurant1Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId1);
-
-            if (existingRestaurant1Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId1).Sum(v => v.Value).ShouldBe(1);
-            }
-
-            var existingRestaurant2Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId2);
-
-            if (existingRestaurant2Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId2).Sum(v => v.Value).ShouldBe(0);
-            }
-
-            var existingRestaurant3Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId3);
-
-            if (existingRestaurant3Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId3).Sum(v => v.Value).ShouldBe(-2);
-            }
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId1, 1);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId2, 0);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId3, -2);
         }
 
         [Test]
@@ -819,42 +753,9 @@ namespace DevLunch.Tests.Controllers
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(1);
 
-            // todo: refactor into single statement using Select
-
-            var existingRestaurant1Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId1);
-
-            var existingRestaurantVote =_context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Where(v => v.Restaurant.Id == restaurantId1)
-                .Select(v => v.Value)
-                .Sum(v => v);
-
-            existingRestaurantVote.ShouldBe(-2);
-
-            if (existingRestaurant1Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId1).Sum(v => v.Value).ShouldBe(-2);
-            }
-
-            var existingRestaurant2Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId2);
-
-            if (existingRestaurant2Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId2).Sum(v => v.Value).ShouldBe(1);
-            }
-
-            var existingRestaurant3Votes = _context.Votes
-                .Where(v => v.Lunch.Id == lunchId)
-                .Any(v => v.Restaurant.Id == restaurantId3);
-
-            if (existingRestaurant3Votes)
-            {
-                _context.Votes.Where(v => v.Lunch.Id == lunchId).Where(v => v.Restaurant.Id == restaurantId3).Sum(v => v.Value).ShouldBe(1);
-            }
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId1, -2);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId2, 1);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId3, 1);
         }
 
         [Test]
@@ -970,19 +871,8 @@ namespace DevLunch.Tests.Controllers
             var numberOfVotes = _context.Votes.Count();
             numberOfVotes.ShouldBe(4);
 
-            var restaurant1VoteTotal = _context.Votes
-                .Where(v => v.Restaurant.Id == restaurantId1)
-                .Where(v => v.Lunch.Id == lunchId)
-                .Sum(v => v.Value);
-
-            restaurant1VoteTotal.ShouldBe(2);
-
-            var restaurant3VoteTotal = _context.Votes
-                .Where(v => v.Restaurant.Id == restaurantId3)
-                .Where(v => v.Lunch.Id == lunchId)
-                .Sum(v => v.Value);
-
-            restaurant3VoteTotal.ShouldBe(-4);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId1, 2);
+            AssertLunchRestaurantVoteTotal(lunchId, restaurantId3, -4);
         }
 
         [Test]
@@ -1052,5 +942,19 @@ namespace DevLunch.Tests.Controllers
             typedResult.StatusCode.ShouldBe((int)HttpStatusCode.NotFound);
         }
 
+        private void AssertLunchRestaurantVoteTotal(int lunchId, int restaurantId, int expectedVoteValue)
+        {
+            var existingRestaurant3Votes = _context.Votes
+                .Where(v => v.Lunch.Id == lunchId)
+                .Any(v => v.Restaurant.Id == restaurantId);
+
+            if (existingRestaurant3Votes)
+            {
+                _context.Votes.Where(v => v.Lunch.Id == lunchId)
+                    .Where(v => v.Restaurant.Id == restaurantId)
+                    .Sum(v => v.Value)
+                    .ShouldBe(expectedVoteValue);
+            }
+        }
     }
 }
