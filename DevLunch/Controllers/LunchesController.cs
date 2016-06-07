@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -24,9 +25,13 @@ namespace DevLunch.Controllers
         // GET: Lunches
         public ActionResult Index()
         {
-            var lunches = _context
+            var lunchData = _context
                 .Lunches
                 .Include(lunch => lunch.Restaurants)
+                .ToList();
+
+            var lunches = lunchData
+                .Select(lunch=>MapLunch(lunch,new List<Vote>()))
                 .OrderByDescending(lunch => lunch.MeetingTime)
                 .ToList();
 
@@ -48,6 +53,13 @@ namespace DevLunch.Controllers
 
             var votes = _context.Votes.Where(v => v.Lunch.Id == id).ToList();
 
+            var lunchDetailsViewModel = MapLunch(lunch, votes);
+
+            return View(lunchDetailsViewModel);
+        }
+
+        private static LunchDetailsViewModel MapLunch(Lunch lunch, List<Vote> votes)
+        {
             var lunchDetailsViewModel = new LunchDetailsViewModel
             {
                 Id = lunch.Id,
@@ -56,8 +68,7 @@ namespace DevLunch.Controllers
                 Restaurants = lunch.Restaurants,
                 Votes = votes
             };
-
-            return View(lunchDetailsViewModel);
+            return lunchDetailsViewModel;
         }
 
         // GET: Lunches/Create

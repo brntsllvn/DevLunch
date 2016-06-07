@@ -142,11 +142,14 @@ namespace DevLunch.Tests.Controllers
             var result = controller.Index() as ViewResult;
 
             // Assert
-            var data = result.Model as IEnumerable<Lunch>;
+            var data = result.Model as IEnumerable<LunchDetailsViewModel>;
             data.ShouldNotBeNull();
             data.Count().ShouldBe(2);
             data.First().Host.ShouldBe("Drew");
             data.Last().Host.ShouldBe("Brent");
+            data.First().MeetingTimeDisplay.ShouldBe("12:00 AM Saturday, December 31, 2005");
+            data.Last().MeetingTimeDisplay.ShouldBe("12:00 AM Friday, December 31, 1999");
+          
         }
 
         [Test]
