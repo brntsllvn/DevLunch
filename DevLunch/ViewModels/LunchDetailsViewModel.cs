@@ -43,19 +43,24 @@ namespace DevLunch.ViewModels
         public static string ToDateTimeLocal(this DateTime? date)
         {
             if (!date.HasValue)
-                return null;
+            {
+                var today = new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 11, 30, 00);
+                return FormatDateTime(today);
+            }
 
-            var dateTime = date.Value;
+            return FormatDateTime(date.Value);
+        }
+
+        private static string FormatDateTime(DateTime today)
+        {
             return String.Format("{0}-{1}-{2}T{3}:{4}:{5}",
-                dateTime.Year,
-                dateTime.Month.ToString().PadLeft(2, '0'),
-                dateTime.Day.ToString().PadLeft(2, '0'),
-                dateTime.Hour.ToString().PadLeft(2, '0'),
-                dateTime.Minute.ToString().PadLeft(2, '0'),
-                dateTime.Second.ToString().PadLeft(2, '0')
+                today.Year,
+                today.Month.ToString().PadLeft(2, '0'),
+                today.Day.ToString().PadLeft(2, '0'),
+                today.Hour.ToString().PadLeft(2, '0'),
+                today.Minute.ToString().PadLeft(2, '0'),
+                today.Second.ToString().PadLeft(2, '0')
                 );
-
-            
         }
     }
 }

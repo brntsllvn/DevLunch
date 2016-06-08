@@ -84,7 +84,9 @@ namespace DevLunch.Controllers
                 ID = restaurant.Id,
                 Display = restaurant.Name,
                 IsChecked = false
-            }).ToList();
+            })
+            .OrderBy(r => r.Display)
+            .ToList();
 
             lunchCreateEditViewModel.Restaurants = checkBoxListItems;
 
@@ -220,6 +222,7 @@ namespace DevLunch.Controllers
         {
             Lunch lunch = _context.Lunches.Find(id);
             _context.Lunches.Remove(lunch);
+            // todo: FK conflict
             _context.SaveChanges();
             return RedirectToAction("Index");
         }

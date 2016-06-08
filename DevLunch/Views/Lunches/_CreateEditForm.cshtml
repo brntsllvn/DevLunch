@@ -18,7 +18,7 @@
         <div class="form-group">
             @Html.LabelFor(model => model.MeetingTime, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                <input class="form-control text-box single-line" data-val="true" data-val-required="The MeetingTime field is required." id="MeetingTime" name="MeetingTime" type="datetime-local" value="@Model.MeetingTime.ToDateTimeLocal()" />
+                <input class="form-control text-box single-line" data-val="true" data-val-required="The MeetingTime field is required." id="MeetingTime" name="MeetingTime" type="datetime-local" value="@Model.MeetingTime.ToDateTimeLocal()"/>
                 @Html.ValidationMessageFor(model => model.MeetingTime, "", new {@class = "text-danger"})
             </div>
         </div>

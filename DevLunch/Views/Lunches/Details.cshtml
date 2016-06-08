@@ -7,14 +7,14 @@
 
 <h2>Lunch</h2>
 
-<h5>@Html.DisplayFor(model => model.Host)</h5>
-<h5>@Html.DisplayFor(model => model.MeetingTimeDisplay)</h5>
+<h5>Host: @Html.DisplayFor(model => model.Host)</h5>
+<h5>Time: @Html.DisplayFor(model => model.MeetingTimeDisplay)</h5>
 <div>
 
     <hr />
     <div class="container-fluid">
         <div class="row">
-            @foreach (var restaurant in Model.Restaurants)
+            @foreach (var restaurant in Model.Restaurants.OrderBy(r => r.Name))
             {
                 String lunchRestaurantId = $"vote-count-for-lunch-{Model.Id}-restaurant-{restaurant.Id}";
 
@@ -61,7 +61,7 @@
 
 <script type="text/javascript">
     function UpdateVoteTotals(voteViewModel) {
-        //alert(JSON.stringify(oldLunchRestaurantId));
+
         var newVoteRestaurantId = voteViewModel.responseJSON.NewLunchRestaurantId;
         var newRestaurantVoteValue = voteViewModel.responseJSON.NewLunchRestaurantVoteTotal;;
         var oldVoteRestaurantId = voteViewModel.responseJSON.OldLunchRestaurantId || "null";
