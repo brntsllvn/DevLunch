@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using DevLunch.Data.Models;
-using FizzWare.NBuilder;
 
 namespace DevLunch.Data.Migrations
 {
@@ -14,30 +15,31 @@ namespace DevLunch.Data.Migrations
             AutomaticMigrationsEnabled = true;
         }
 
-        protected override void Seed(DevLunch.Data.DevLunchDbContext context)
+        protected override void Seed(DevLunchDbContext context)
         {
-            var restaurants = Builder<Restaurant>.CreateListOfSize(30)
-                .All()
-                .With(r => r.Name = Faker.Company.Name())
-                .Build();
+            context.Votes.RemoveRange(context.Votes);
+            context.Restaurants.RemoveRange(context.Restaurants);
+            context.Lunches.RemoveRange(context.Lunches);
 
-            var daysGenerator = new RandomGenerator();
+            var restaurants = new List<Restaurant>
+            {
+                new Restaurant {Name = "Rocco’s"},
+                new Restaurant {Name = "Li’l Woody’s"},
+                new Restaurant {Name = "Biscuit Bitch Belltown"},
+                new Restaurant {Name = "Lunchbox Laboratory"},
+                new Restaurant {Name = "Citrus Thai Cuisine"},
+                new Restaurant {Name = "Icon Grill"},
+                new Restaurant {Name = "FareStart"},
+                new Restaurant {Name = "Gordon Biersch"},
+                new Restaurant {Name = "Dahlia Lounge"},
+                new Restaurant {Name = "Cactus"},
+                new Restaurant {Name = "Blue Moon Burgers"},
+                new Restaurant {Name = "Serious Pie"},
+                new Restaurant {Name = "Brave Horse Tavern"}
+            };
 
-            var lunches = Builder<Lunch>.CreateListOfSize(20)
-                .All()
-                .With(r => r.Host = Faker.Name.FullName())
-                .With(r => r.MeetingTime = DateTime.Now.AddDays(-daysGenerator.Next(1, 100)))
-                .With(r => r.Restaurants = new List<Restaurant>
-                {
-                    Pick<Restaurant>.RandomItemFrom(restaurants),
-                    Pick<Restaurant>.RandomItemFrom(restaurants),
-                    Pick<Restaurant>.RandomItemFrom(restaurants),
-                })
-                .Build();
-
-            context.Lunches.AddRange(lunches);
+            context.Restaurants.AddRange(restaurants);
             context.SaveChanges();
-
         }
     }
 }
