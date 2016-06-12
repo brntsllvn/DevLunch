@@ -22,6 +22,9 @@
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    @Html.ActionLink("Back to List", "Index")
+<p>
+    <a href="@Url.Action("Edit", new {id = Model.Id})"><i class="fa fa-graduation-cap"></i></a>
+</p>
+<p>
+    <a href="@Url.Action("Index", new {id = Model.Id})"><i class="fa fa-th-list fa-3x"></i></a>
 </p>

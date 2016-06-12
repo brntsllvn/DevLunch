@@ -9,6 +9,7 @@
 
 <h5>Host: @Html.DisplayFor(model => model.Host)</h5>
 <h5>Time: @Html.DisplayFor(model => model.MeetingTimeDisplay)</h5>
+<a href="@Url.Action("Index", new {id = Model.Id})"><i class="fa fa-th-list fa-3x"></i></a>
 <div>
 
     <hr />
@@ -53,10 +54,7 @@
 <br/>
 
 <p>
-    @* todo: only allow editing by the lunch creator *@
-    @* todo (feature): add write-in restaurant candidates *@
-    @Html.ActionLink("Edit", "Edit", new {id = Model.Id}) |
-    @Html.ActionLink("Back to List", "Index")
+    <a href="@Url.Action("Edit", new {id = Model.Id})"><i class="fa fa-pencil fa-3x"></i></a>
 </p>
 
 <script type="text/javascript">

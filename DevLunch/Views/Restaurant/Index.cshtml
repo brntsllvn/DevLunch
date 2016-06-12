@@ -8,7 +8,7 @@
 <h2>Restaurants</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    <a href="@Url.Action("Create")"><i class="fa fa-plus fa-3x"></i></a>
 </p>
 <table class="table">
     <tr>
@@ -25,9 +25,7 @@
                 @Html.ActionLink(item.Name, "Edit", new { id = item.Id })
             </td>
             <td>
-                <a href="@Url.Action("Delete", new {id = item.Id})">
-                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                </a>
+                <a href="@Url.Action("Delete", new {id = item.Id})"><i class="fa fa-trash fa-3x"></i></a>
             </td>
         </tr>
     }
