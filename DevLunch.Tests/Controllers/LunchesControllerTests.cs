@@ -396,5 +396,41 @@ namespace DevLunch.Tests.Controllers
             _context.Lunches.Count().ShouldBe(0);
             result.RouteValues["action"].ShouldBe("Index");
         }
+
+        [Test]
+        public void Delete_Post_LunchWithVotes_RemovesRecordFromDb()
+        {
+            // Arrange
+            var restaurant = new Restaurant
+            {
+                Name = "Lunchbox Labs",
+                Latitude = 55,
+                Longitude = 99
+            };
+            var lunch = new Lunch
+            {
+                Host = "Brent",
+                Restaurants = new List<Restaurant>
+                {
+                    restaurant
+                },
+                MeetingTime = new DateTime(1999, 12, 31),
+               
+            };
+            _context.Lunches.Add(lunch);
+            _context.Votes.Add(new Vote { Lunch = lunch, Restaurant = restaurant, VoteType = VoteType.Upvote, Value = 1 });
+            _context.SaveChanges();
+           
+            var controller = new LunchesController(_context);
+
+            var recordId = lunch.Id;
+
+            // Act
+            var result = controller.DeleteConfirmed(recordId) as RedirectToRouteResult;
+
+            // Assert
+            _context.Lunches.Count().ShouldBe(0);
+            result.RouteValues["action"].ShouldBe("Index");
+        }
     }
 }

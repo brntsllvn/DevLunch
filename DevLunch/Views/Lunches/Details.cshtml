@@ -5,11 +5,12 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Lunch</h2>
-
 <h5>Host: @Html.DisplayFor(model => model.Host)</h5>
 <h5>Time: @Html.DisplayFor(model => model.MeetingTimeDisplay)</h5>
-<a href="@Url.Action("Index", new {id = Model.Id})"><i class="fa fa-th-list fa-3x"></i></a>
+<p>
+    <a href="@Url.Action("Edit", new {id = Model.Id})"><i class="fa fa-pencil fa-3x"></i></a>
+</p>
+
 <div>
 
     <hr />
@@ -52,10 +53,6 @@
 </div>
 
 <br/>
-
-<p>
-    <a href="@Url.Action("Edit", new {id = Model.Id})"><i class="fa fa-pencil fa-3x"></i></a>
-</p>
 
 <script type="text/javascript">
     function UpdateVoteTotals(voteViewModel) {

@@ -222,7 +222,11 @@ namespace DevLunch.Controllers
         {
             Lunch lunch = _context.Lunches.Find(id);
             _context.Lunches.Remove(lunch);
-            // todo: FK conflict
+
+            var votesForLunch = _context.Votes.Where(v => v.Lunch.Id == lunch.Id)
+                .ToList();
+            _context.Votes.RemoveRange(votesForLunch);
+
             _context.SaveChanges();
             return RedirectToAction("Index");
         }

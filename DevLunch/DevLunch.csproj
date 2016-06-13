@@ -260,6 +260,7 @@
     <Content Include="Views\Shared\EditorTemplates\CheckBoxListItem.cshtml" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="App_Code\" />
     <Folder Include="App_Data\" />
     <Folder Include="Views\Votes\" />
   </ItemGroup>
