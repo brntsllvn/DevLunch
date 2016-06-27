@@ -9,6 +9,7 @@ using DevLunch.Data.Models;
 
 namespace DevLunch.Controllers
 {
+    [Authorize]
     public class RestaurantController : Controller
     {
         private readonly DevLunchDbContext _context;

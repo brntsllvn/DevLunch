@@ -10,6 +10,7 @@ using DevLunch.ViewModels;
 
 namespace DevLunch.Controllers
 {
+    [Authorize]
     public class LunchesController : Controller
     {
         private readonly DevLunchDbContext _context;
