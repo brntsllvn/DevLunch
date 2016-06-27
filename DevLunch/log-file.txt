@@ -35,3 +35,5 @@ System.Exception: uh oh!
 2016-06-22 08:47:15,965 [8] INFO  DevLunch.Attributes.LogEveryActionFilter - User  executed action Home/Index
 2016-06-22 08:48:02,364 [7] INFO  DevLunch.Attributes.LogEveryActionFilter - User  executed action Home/Index
 2016-06-22 08:50:09,617 [8] INFO  DevLunch.Attributes.LogEveryActionFilter - User  executed action Home/Index
+2016-06-27 10:16:57,384 [5] INFO  DevLunch.Attributes.LogEveryActionFilter - User brntsllvn@gmail.com executed action Home/Index
+2016-06-27 10:17:06,320 [9] INFO  DevLunch.Attributes.LogEveryActionFilter - User brntsllvn@gmail.com executed action Lunches/Index

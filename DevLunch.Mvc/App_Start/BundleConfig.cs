@@ -25,6 +25,7 @@ namespace DevLunch.Mvc
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
+                      "~/Content/bootswatch/cyborg/bootstrap.min.css",
                       "~/Content/site.css"));
         }
     }
