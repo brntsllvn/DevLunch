@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch.Data", "DevLunch.D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{42C7FDC1-C187-4100-A368-F6798158193B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch.Mvc", "DevLunch.Mvc\DevLunch.Mvc.csproj", "{39B41D88-1378-4453-A4AC-A1CF2C79B10B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{13532656-135B-44AE-8649-FB321D82E7DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{13532656-135B-44AE-8649-FB321D82E7DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{13532656-135B-44AE-8649-FB321D82E7DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39B41D88-1378-4453-A4AC-A1CF2C79B10B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39B41D88-1378-4453-A4AC-A1CF2C79B10B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39B41D88-1378-4453-A4AC-A1CF2C79B10B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39B41D88-1378-4453-A4AC-A1CF2C79B10B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

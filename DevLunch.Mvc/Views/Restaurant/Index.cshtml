@@ -1,0 +1,33 @@
+﻿@model IEnumerable<DevLunch.Data.Models.Restaurant>
+
+@{
+    ViewBag.Title = "Restaurants";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Restaurants</h2>
+
+<p>
+    <a href="@Url.Action("Create")"><i class="fa fa-plus fa-3x"></i></a>
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.ActionLink(item.Name, "Edit", new { id = item.Id })
+            </td>
+            <td>
+                <a href="@Url.Action("Delete", new {id = item.Id})"><i class="fa fa-trash fa-3x"></i></a>
+            </td>
+        </tr>
+    }
+
+</table>
