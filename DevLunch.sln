@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25123.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch", "DevLunch\DevLunch.csproj", "{825EB829-948A-4374-B526-AC252D9E660A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch.Tests", "DevLunch.Tests\DevLunch.Tests.csproj", "{630784DF-FCF9-497D-9345-E9D69A64A0EE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevLunch.Data", "DevLunch.Data\DevLunch.Data.csproj", "{13532656-135B-44AE-8649-FB321D82E7DF}"
@@ -19,10 +17,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{825EB829-948A-4374-B526-AC252D9E660A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{825EB829-948A-4374-B526-AC252D9E660A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{825EB829-948A-4374-B526-AC252D9E660A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{825EB829-948A-4374-B526-AC252D9E660A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{630784DF-FCF9-497D-9345-E9D69A64A0EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{630784DF-FCF9-497D-9345-E9D69A64A0EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{630784DF-FCF9-497D-9345-E9D69A64A0EE}.Release|Any CPU.ActiveCfg = Release|Any CPU

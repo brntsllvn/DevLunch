@@ -138,9 +138,9 @@
       <Project>{13532656-135b-44ae-8649-fb321d82e7df}</Project>
       <Name>DevLunch.Data</Name>
     </ProjectReference>
-    <ProjectReference Include="..\DevLunch\DevLunch.csproj">
-      <Project>{825eb829-948a-4374-b526-ac252d9e660a}</Project>
-      <Name>DevLunch</Name>
+    <ProjectReference Include="..\DevLunch.Mvc\DevLunch.Mvc.csproj">
+      <Project>{39b41d88-1378-4453-a4ac-a1cf2c79b10b}</Project>
+      <Name>DevLunch.Mvc</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
