@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
@@ -46,9 +47,12 @@ namespace DevLunch.Mvc
             // This is similar to the RememberMe option when you log in.
             app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
 
+            var clientId = ConfigurationManager.AppSettings["GithubAuthClientId"];
+            var clientSecret = ConfigurationManager.AppSettings["GithubAuthClientSecret"];
+
             app.UseGitHubAuthentication(
-                clientId: "40115333d4281ebe899a",
-                clientSecret: "b6ccafcc7cb27c3adcf186b91f0f5fdf399d857a");
+                clientId: clientId,
+                clientSecret: clientSecret);
 
             // Uncomment the following lines to enable logging in with third party login providers
             //app.UseMicrosoftAccountAuthentication(
