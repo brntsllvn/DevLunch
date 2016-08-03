@@ -6,7 +6,7 @@ namespace DevLunch.Data
 {
     public class DevLunchDbContext:DbContext
     {
-        public DevLunchDbContext()
+        public DevLunchDbContext():base("DefaultConnection")
         {
             
         }
