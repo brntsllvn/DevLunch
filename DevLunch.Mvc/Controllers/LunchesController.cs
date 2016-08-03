@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data.Entity;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
@@ -26,6 +27,23 @@ namespace DevLunch.Controllers
         public LunchesController(DevLunchDbContext context)
         {
             _context = context;
+        }
+
+        public ActionResult TestDb()
+        {
+            var connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
+            using (var connection = new SqlConnection(connectionString))
+            using (var command = connection.CreateCommand())
+            {
+                connection.Open();
+
+                command.CommandText = "select 1";
+                command.ExecuteNonQuery();
+
+                connection.Close();
+            }
+
+            return Content("Success");
         }
 
         // GET: Lunches
