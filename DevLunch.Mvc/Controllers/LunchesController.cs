@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
@@ -7,12 +8,16 @@ using System.Web.Mvc;
 using DevLunch.Data;
 using DevLunch.Data.Models;
 using DevLunch.ViewModels;
+using log4net;
 
 namespace DevLunch.Controllers
 {
     [Authorize]
     public class LunchesController : Controller
     {
+        private static readonly ILog _logger = LogManager.GetLogger(typeof(LunchesController));
+
+
         private readonly DevLunchDbContext _context;
 
         public LunchesController() : this(new DevLunchDbContext())
@@ -26,6 +31,8 @@ namespace DevLunch.Controllers
         // GET: Lunches
         public ActionResult Index()
         {
+            _logger.DebugFormat("ConnectionString: '{0}'",ConfigurationManager.ConnectionStrings["DefaultConnection"]);
+
             var lunchData = _context
                 .Lunches
                 .Include(lunch => lunch.Restaurants)
