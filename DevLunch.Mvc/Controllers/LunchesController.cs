@@ -49,18 +49,24 @@ namespace DevLunch.Controllers
         // GET: Lunches
         public ActionResult Index()
         {
+            try
+            {
+                var lunchData = _context
+                    .Lunches
+                    .Include(lunch => lunch.Restaurants)
+                    .ToList();
 
-            var lunchData = _context
-                .Lunches
-                .Include(lunch => lunch.Restaurants)
-                .ToList();
+                var lunches = lunchData
+                    .Select(lunch => MapLunch(lunch, new List<Vote>()))
+                    .OrderByDescending(lunch => lunch.MeetingTime)
+                    .ToList();
 
-            var lunches = lunchData
-                .Select(lunch=>MapLunch(lunch,new List<Vote>()))
-                .OrderByDescending(lunch => lunch.MeetingTime)
-                .ToList();
-
-            return View(lunches);
+                return View(lunches);
+            }
+            catch (System.Data.SqlClient.SqlException exception)
+            {
+                throw new Exception(string.Format("Unable to connect, Server is {0}",exception.Server),exception);
+            }
         }
 
         // GET: Lunches/Details/5
