@@ -31,7 +31,6 @@ namespace DevLunch.Controllers
         // GET: Lunches
         public ActionResult Index()
         {
-            _logger.DebugFormat("ConnectionString: '{0}'",ConfigurationManager.ConnectionStrings["DefaultConnection"]);
 
             var lunchData = _context
                 .Lunches
